@@ -1,10 +1,12 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from algorithms.fcfs import fcfs
 from algorithms.sjf import sjf
 from algorithms.priority import priority
 from algorithms.rr import round_robin
 from algorithms.priority_rr import priority_round_robin
+import csv
 
+from random import randint
 app = Flask(__name__)
 
 # Dummy list to hold processes
@@ -15,31 +17,24 @@ def index():
     global processes
 
     if request.method == 'POST':
-        # Check if the form data is empty (indicating a page refresh)
-        if all(value == '' for value in request.form.values()):
-            processes = []  # Reset the processes list to an empty list
+        if request.headers['Content-Type'] == 'text/plain':
+            # Clear existing processes
+            processes = []
 
-        # Get form data
-        algorithm = request.form['algorithm']
-        new_process_id = int(request.form['newProcessID'])
-        new_arrival_time = int(request.form['newArrivalTime'])
-        new_burst_time = int(request.form['newBurstTime'])
+            # Parse the CSV data
+            csv_data = request.data.decode('utf-8').splitlines()
+            csv_reader = csv.reader(csv_data)
+            next(csv_reader)  # Skip the header row
+            for row in csv_reader:
+                pid, arrival_time, burst_time = row
+                processes.append({'pid': pid, 'arrival_time': arrival_time, 'burst_time': burst_time})
 
-        if algorithm == "rr" or algorithm == "priority_rr":
-            new_quantum = int(request.form['quantum'])
-        else:
-            new_quantum = 0
+            # Print received processes
+            print("Received processes:", processes)
 
-        if algorithm == "priority" or algorithm == "priority_rr":
-            new_priority = int(request.form['newPriority'])
-        else:
-            new_priority = None
-            
-        # Append new process to the list
-        processes.append({'pid': new_process_id, 'arrival_time': new_arrival_time, 'burst_time': new_burst_time, 'priority': new_priority})
-
-        # Render the entire page with the updated process table
-        return render_template('index.html', algorithm=algorithm, processes=processes, quantum=new_quantum)
+            ra = randint(1, 5)
+            # Dummy response
+            return jsonify({"tmp": ra})
 
     return render_template('index.html', algorithm='fcfs', processes=processes)
 
