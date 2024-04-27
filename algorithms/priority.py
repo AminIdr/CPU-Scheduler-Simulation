@@ -2,7 +2,7 @@
 # Non-preemptive
 # Note: Once two processes with the same priority are in the ready queue, it doesn't matter which one arrived first
 # However, in our implementation we choose the first arrived one
-def priority_scheduling(processes):
+def priority(processes):
     """
     Simulates Priority Scheduling algorithm.
 

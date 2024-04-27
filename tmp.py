@@ -1,66 +1,48 @@
-from queue import Queue
+from flask import Flask, render_template, request
+from algorithms.fcfs import fcfs
+from algorithms.sjf import sjf
+from algorithms.priority import priority
+from algorithms.rr import round_robin
+from algorithms.priority_rr import priority_round_robin
 from models.process import Process
+app = Flask(__name__)
 
-def round_robin(processes, quantum):
-    """
-    Simulates Round Robin (RR) scheduling algorithm using a simple queue.
+# Dummy list to hold processes
+processes = []
 
-    Args:
-        processes (list): List of Process objects.
-        quantum (int): Time quantum for each process.
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    global processes
+    p1 = Process(1, 0, 12)
+    p2 = Process(2, 5, 19)
+    p3 = Process(3, 8, 21)
+    p4 = Process(4, 11, 13)
+    p5 = Process(5, 15, 15)
 
-    Returns:
-        list: List of Process objects representing the order in which processes are scheduled.
-    """
-    # Initialize scheduler and current time
-    scheduler = []
-    current_time = 0
+    processes = [p1, p2, p3, p4, p5]
+    # if request.method == 'POST':
+    #     # Check if the form data is empty (indicating a page refresh)
+    #     if all(value == '' for value in request.form.values()):
 
-    # Create a queue for ready queue
-    ready_queue = Queue()
+    #         print("Here")
+    #         processes = []  # Reset the processes list to an empty list
+    #     else:
+    #         print(request.form)
+    #         print("Here 2")
+    #         # Get form data
+    #         algorithm = request.form['algorithm']
+    #         new_process_id = int(request.form['newProcessID'])
+    #         new_arrival_time = int(request.form['newArrivalTime'])
+    #         new_burst_time = int(request.form['newBurstTime'])
+    #         new_priority = int(request.form.get('newPriority', 0))  # Priority is optional
 
-    # Sort processes based on arrival time
-    sorted_processes = sorted(processes, key=lambda x: x.arrival_time)
+    #         # Append new process to the list
+    #         processes.append({'id': new_process_id, 'arrival_time': new_arrival_time, 'burst_time': new_burst_time, 'priority': new_priority})
 
-    # Initialize index to track next process to arrive
-    next_process_index = 0
+    #     # Render the entire page with the updated process table
+    #     return render_template('index.html', algorithm=algorithm, processes=processes)
 
-    # Loop until all processes are completed
-    while not ready_queue.empty() or next_process_index < len(sorted_processes):
-        # Add arriving processes to the ready queue
-        while next_process_index < len(sorted_processes) and sorted_processes[next_process_index].arrival_time <= current_time:
-            ready_queue.put(sorted_processes[next_process_index])
-            next_process_index += 1
+    return render_template('index.html', algorithm='fcfs', processes=processes)
 
-        # Execute process from the front of the queue
-        if not ready_queue.empty():
-            current_process = ready_queue.get()
-
-            # Check if a new process arrives during execution
-            while next_process_index < len(sorted_processes) and sorted_processes[next_process_index].arrival_time <= current_time + quantum:
-                ready_queue.put(sorted_processes[next_process_index])
-                next_process_index += 1
-
-            # Update current time based on burst time or remaining time quantum
-            execution_time = min(quantum, current_process.burst_time)
-            current_time += execution_time
-
-            # Subtract burst time from process burst time
-            current_process.burst_time -= execution_time
-
-            # Record process completion time if completed
-            if current_process.burst_time <= 0:
-                current_process.completion_time = current_time
-
-            # Add process back to ready queue if burst time remains
-            else:
-                ready_queue.put(current_process)
-
-            # Add process to scheduler
-            scheduler.append(current_process)
-
-        # If no process is ready, wait until next arrival
-        else:
-            current_time = sorted_processes[next_process_index].arrival_time
-
-    return scheduler
+if __name__ == "__main__":
+    app.run(debug=True)

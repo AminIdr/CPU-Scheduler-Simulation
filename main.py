@@ -1,66 +1,47 @@
-from utils.generator import generate_processes
+from flask import Flask, render_template, request
 from algorithms.fcfs import fcfs
 from algorithms.sjf import sjf
-from algorithms.priority import priority_scheduling
-from algorithms.round_robin import round_robin
+from algorithms.priority import priority
+from algorithms.rr import round_robin
 from algorithms.priority_rr import priority_round_robin
-from models.process import Process
-# Generate random input data (processes)
-# num_processes = 5
-# num_priorities = (1, 6)
-# burst_time_range = (3, 10)
-# arrival_time_range = (0, 8)
-# processes = generate_processes(num_processes, burst_time_range, arrival_time_range, num_priorities)
 
-# for process in processes:
-#     print(process)
+app = Flask(__name__)
 
-print("#####################")
-# # Apply Priority scheduling algorithm
-# scheduled_processes, curr_time = round_robin(processes, 1)
+# Dummy list to hold processes
+processes = []
 
-# # Display scheduled processes
-# print("Scheduled Processes (Round Robin Scheduling):")
-# for i in range(len(scheduled_processes)):
-#     print(scheduled_processes[i], curr_time[i])
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    global processes
 
+    if request.method == 'POST':
+        # Check if the form data is empty (indicating a page refresh)
+        if all(value == '' for value in request.form.values()):
+            processes = []  # Reset the processes list to an empty list
 
-# print("#####################")
-# # Apply SJF scheduling algorithm
-# scheduled_processes = sjf(processes)
+        # Get form data
+        algorithm = request.form['algorithm']
+        new_process_id = int(request.form['newProcessID'])
+        new_arrival_time = int(request.form['newArrivalTime'])
+        new_burst_time = int(request.form['newBurstTime'])
 
-# # Display scheduled processes
-# print("Scheduled Processes (SJF):")
-# for process in scheduled_processes:
-#     print(process)
+        if algorithm == "rr" or algorithm == "priority_rr":
+            new_quantum = int(request.form['quantum'])
+        else:
+            new_quantum = 0
 
-p1 = Process(1, 0, 12, 3)
-p2 = Process(2, 5, 19, 3)
-p3 = Process(3, 8, 21, 5)
-p4 = Process(4, 11, 13, 2)
-p5 = Process(5, 15, 15, 3)
+        if algorithm == "priority" or algorithm == "priority_rr":
+            new_priority = int(request.form['newPriority'])
+        else:
+            new_priority = None
+            
+        # Append new process to the list
+        processes.append({'pid': new_process_id, 'arrival_time': new_arrival_time, 'burst_time': new_burst_time, 'priority': new_priority})
 
-processes = [p1, p2, p3, p4, p5]
-# Apply Priority scheduling algorithm
-scheduled_processes, curr_time = priority_round_robin(processes, 4)
+        # Render the entire page with the updated process table
+        return render_template('index.html', algorithm=algorithm, processes=processes, quantum=new_quantum)
 
-# # Display scheduled processes
-print("Scheduled Processes (Round Robin Scheduling):")
-for i in range(len(scheduled_processes)):
-    print(scheduled_processes[i], curr_time[i])
+    return render_template('index.html', algorithm='fcfs', processes=processes)
 
-
-
-# p1 = Process(1, 6, 10, 2)
-# p2 = Process(2, 4, 3, 4)
-# p3 = Process(3, 3, 3, 1)
-# p4 = Process(4, 2, 6, 2)
-# p5 = Process(5, 5, 4, 2)
-# processes = [p1, p2, p3, p4, p5]
-# scheduled_processes = priority_preemptive(processes)
-# for process in scheduled_processes:
-#     print(process)  
-# scheduled_processes, curr_time = priority_round_robin(processes, 2)
-# for i in range(len(scheduled_processes)):
-#     # print("het")
-#     print(scheduled_processes[i], curr_time[i])
+if __name__ == "__main__":
+    app.run(debug=True)
