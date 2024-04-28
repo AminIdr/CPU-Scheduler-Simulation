@@ -74,13 +74,22 @@ document.addEventListener('DOMContentLoaded', function() {
         // Toggle the visibility of the priority column based on the selected algorithm
         togglePriorityColumnVisibility();
     });
-
+    
     // Function to clear the table
-    function clearTable() {
+    function  clearTable() {
         const processTableBody = document.getElementById('processTableBody');
-        processTableBody.innerHTML = ''; // Clear the table body
+        var rows = processTableBody.querySelectorAll("tr");
+        
+        rows.forEach(function(row) {
+            row.parentNode.removeChild(row);
+        });
+
         addedProcesses = {};
+
+        processTableBody.innerHTML = ''; // Clear the table body
+
     }
+
 
     // Add event listener to the "Add Process" button to validate input fields before adding a new process
     document.getElementById('addProcess').addEventListener('click', function() {
@@ -145,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('calculate').addEventListener('click', function(event) {
         event.preventDefault(); // Prevent default form submission behavior
-
+    
         // Remove the required attribute from input fields
         document.getElementById('newProcessID').removeAttribute('required');
         document.getElementById('newArrivalTime').removeAttribute('required');
@@ -158,45 +167,51 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
     
-        // Retrieve data from the table and construct a CSV string
-        let csv = 'Process ID,Arrival Time,Burst Time';
+        // Retrieve data from the table and construct a JSON object
         const processRows = document.querySelectorAll('#processTableBody tr');
+        const processes = [];
+        
         processRows.forEach(row => {
+            const process = {};
             const cells = row.querySelectorAll('td');
-            const pid = cells[0].textContent;
-            const arrivalTime = cells[1].textContent;
-            const burstTime = cells[2].textContent;
-            csv += `\n${pid},${arrivalTime},${burstTime}`;
-        });
+            process.pid = cells[0].textContent;
+            process.arrival_time = cells[1].textContent;
+            process.burst_time = cells[2].textContent;
     
-        // Send the CSV data to the server using a POST request
+            // Check if priority column is present and add priority if needed
+            var algorithm = document.getElementById('algorithm').value;
+            if (algorithm === "priority" || algorithm === "priority_rr") {
+                process.priority = cells[3].textContent;
+            }
+    
+            processes.push(process);
+        });
+        // Send the processes data to the server using a POST request
         fetch('/', {
             method: 'POST',
             headers: {
-                'Content-Type': 'text/plain' // Set content type to plain text
+                'Content-Type': 'application/json'
             },
-            body: csv
+            body: JSON.stringify(processes)
         })
         .then(response => {
             if (response.ok) {
-                // Process the response from the server
-                response.json().then(data => {
-                    console.log("Processes sent successfully to server.");
-                    // Access the tmp variable from the response data
-                    const tmpValue = data.tmp;
-                    console.log(tmpValue)
-                    document.getElementById("tmp").textContent = tmpValue;
-                    console.log("Value of tmp received from server:", tmpValue);
+                // Process the response from the server if needed
+                // For now, let's just log a success message
+                console.log("Processes sent successfully to server.");
+                // Log the response from the server
+                response.text().then(data => {
+                    console.log("Response from server:", data);
                 });
             } else {
                 console.error("Failed to send processes to server.");
             }
         })
-        
         .catch(error => {
             console.error("Error sending processes to server:", error);
         });
     });
+    
     
 
 });

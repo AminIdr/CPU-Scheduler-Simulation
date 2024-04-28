@@ -1,40 +1,34 @@
-from flask import Flask, render_template, request, jsonify
-from algorithms.fcfs import fcfs
-from algorithms.sjf import sjf
-from algorithms.priority import priority
-from algorithms.rr import round_robin
-from algorithms.priority_rr import priority_round_robin
-import csv
+from flask import Flask, render_template, request
+import json
+from models.process import Process
 
-from random import randint
 app = Flask(__name__)
 
 # Dummy list to hold processes
-processes = []
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     global processes
+    processes = []
 
     if request.method == 'POST':
-        if request.headers['Content-Type'] == 'text/plain':
-            # Clear existing processes
-            processes = []
+        # Retrieve JSON data from the request
+        process_data = request.get_json()
 
-            # Parse the CSV data
-            csv_data = request.data.decode('utf-8').splitlines()
-            csv_reader = csv.reader(csv_data)
-            next(csv_reader)  # Skip the header row
-            for row in csv_reader:
-                pid, arrival_time, burst_time = row
-                processes.append({'pid': pid, 'arrival_time': arrival_time, 'burst_time': burst_time})
+        # Create Process instances for each received process data
+        for data in process_data:
+            process = Process(data['pid'], data['arrival_time'], data['burst_time'])
+            if 'priority' in data:
+                process.priority = data['priority']
+            processes.append(process)
 
-            # Print received processes
-            print("Received processes:", processes)
+        # Log the received processes (for testing purposes)
+        print("Received processes:", processes)
 
-            ra = randint(1, 5)
-            # Dummy response
-            return jsonify({"tmp": ra})
+        # Process the received data further as needed
+        
+        # Return a success response
+        return "Processes received successfully.", 200
 
     return render_template('index.html', algorithm='fcfs', processes=processes)
 
