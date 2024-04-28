@@ -18,6 +18,7 @@ class Process:
         self._burst_time = burst_time
         self._priority = priority
         self._completion_time = None
+        
 
     @property
     def pid(self):
