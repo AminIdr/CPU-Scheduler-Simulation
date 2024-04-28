@@ -20,10 +20,8 @@ def index():
         # Extract the chosen algorithm and list of processes from the data
         algorithm = data.get('algorithm')
         process_data = data.get('processes', [])
-        print(data)
         if algorithm == 'rr' or algorithm == 'priority_rr':
             quantum = int(data.get('quantum'))
-            print(quantum)
 
         # Create Process instances for each received process data
         for process_info in process_data:
@@ -32,13 +30,12 @@ def index():
                 process.priority = int(process_info['priority'])
             processes.append(process)
         
-        # Log the received algorithm and processes (for testing purposes)
-        print("Received algorithm:", algorithm)
-        print("Received processes:", processes)
-
         scheduler = []
+        avg_turnaround_time = 0
+        avg_waiting_time = 0
+        cpu_utilization = 0
         if algorithm == 'fcfs':
-            scheduler = fcfs(processes)
+            scheduler, avg_turnaround_time, avg_waiting_time, cpu_utilization = fcfs(processes)
         elif algorithm == 'sjf':
             scheduler = sjf(processes)
         elif algorithm == 'priority':
@@ -50,11 +47,18 @@ def index():
         else: 
             return "There was an error receiving the algorithm type from the client."
 
-        for process in scheduler:
-            print(process)
-            print("###########")
-        # Return a success response
-        return "Data received successfully.", 200
+        # Create a list of tuples containing scheduler results
+        scheduler_results = [(process.pid, turnaround_time, waiting_time) for process, turnaround_time, waiting_time in scheduler]
+        # scheduler_results_json = [(process.pid, turnaround_time, waiting_time) for process, turnaround_time, waiting_time in scheduler_results]
+        print(scheduler_results)
+        # print(scheduler_results_json)
+        # Return the scheduler results as JSON data
+        return jsonify({
+            'schedulerResults': scheduler_results,
+            'avgTurnaroundTime': avg_turnaround_time,
+            'avgWaitingTime': avg_waiting_time,
+            'cpuUtilization': cpu_utilization
+        }), 200
 
     return render_template('index.html', algorithm='fcfs', processes=processes)
 

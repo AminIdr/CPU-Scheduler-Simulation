@@ -41,6 +41,21 @@
                 </div>
             </div>
 
+                <!-- Process Table -->
+                <table class="table">
+                <thead>
+                    <tr>
+                        <th>Process ID</th>
+                        <th>Arrival Time</th>
+                        <th>Burst Time</th>
+                        <th id="priorityColumn">Priority</th>
+                    </tr>
+                </thead>
+                <tbody id="processTableBody">
+                    <!-- Rows will be added dynamically here -->
+                </tbody>
+            </table>
+
             <!-- Select algorithm -->
             <div class="row mb-3">
                 <div class="col-md-3">
@@ -68,21 +83,24 @@
             </div>
 
 
-            <!-- Process Table -->
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Process ID</th>
-                        <th>Arrival Time</th>
-                        <th>Burst Time</th>
-                        <th id="priorityColumn">Priority</th>
-                    </tr>
-                </thead>
-                <tbody id="processTableBody">
-                    <!-- Rows will be added dynamically here -->
-                </tbody>
-            </table>
+
         </form>
+        
+            <h3>Scheduler Results</h3>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Process ID</th>
+                  <th scope="col">Turnaround Time</th>
+                  <th scope="col">Waiting Time</th>
+                </tr>
+              </thead>
+              <tbody id="schedulerResults">
+                <!-- Scheduler results will be dynamically added here -->
+              </tbody>
+            </table>
+          
+        
     </div>
 
     <!-- Bootstrap JS (if needed) -->

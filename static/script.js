@@ -211,8 +211,6 @@ document.addEventListener('DOMContentLoaded', function() {
             requestData.quantum = quantum;
         }
     
-
-        console.log(requestData);
         // Send the data to the server using a POST request
         fetch('/', {
             method: 'POST',
@@ -225,17 +223,21 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response.ok) {
                 // Process the response from the server if needed
                 // For now, let's just log a success message
-                console.log("Data sent successfully to server.");
-                // Log the response from the server
-                response.text().then(data => {
-                    console.log("Response from server:", data);
-                });
+                console.log("Processes sent successfully to server.");
+        
+                // Parse the response JSON data
+                return response.json();
             } else {
-                console.error("Failed to send data to server.");
+                console.error("Failed to send processes to server.");
             }
         })
+        .then(data => {
+            console.log(data.schedulerResults);
+            // Display the scheduler results in the table
+            displaySchedulerResults(data.schedulerResults, data.avgTurnaroundTime, data.avgWaitingTime, data.cpuUtilization);
+        })
         .catch(error => {
-            console.error("Error sending data to server:", error);
+            console.error("Error sending processes to server:", error);
         });
     });
     
@@ -244,6 +246,45 @@ document.addEventListener('DOMContentLoaded', function() {
         errorMessage.textContent = message;
         errorMessage.style.display = 'inline';
     }
+
+    function displaySchedulerResults(schedulerResults, avgTurnaroundTime, avgWaitingTime, cpuUtilization) {
+        // Get the table body element
+        const tableBody = document.getElementById('schedulerResults');
+    
+        // Clear existing rows
+        tableBody.innerHTML = '';
+        
+        // Loop through scheduler results and create rows in the table
+        schedulerResults.forEach(result => {
+            console.log(result);
+            // Convert values to integers
+            const processId = parseInt(result[0]);
+            const turnaroundTime = parseInt(result[1]);
+            const waitingTime = parseInt(result[2]);
+    
+            // Create a new row
+            const row = document.createElement('tr');
+    
+            // Create cells for each data item in the result tuple
+            const processIdCell = document.createElement('td');
+            processIdCell.textContent = processId;
+            const turnaroundTimeCell = document.createElement('td');
+            turnaroundTimeCell.textContent = turnaroundTime;
+            const waitingTimeCell = document.createElement('td');
+            waitingTimeCell.textContent = waitingTime;
+    
+            // Append cells to the row
+            row.appendChild(processIdCell);
+            row.appendChild(turnaroundTimeCell);
+            row.appendChild(waitingTimeCell);
+    
+            // Append row to the table body
+            tableBody.appendChild(row);
+        });
+    }
+    
+  
+  
     
 
 });
