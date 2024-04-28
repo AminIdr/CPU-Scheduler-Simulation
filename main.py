@@ -2,7 +2,8 @@ from flask import Flask, render_template, request, jsonify
 from algorithms.fcfs import fcfs
 from algorithms.sjf import sjf
 from algorithms.priority import priority
-from algorithms.rr import round_robin
+from algorithms.priority_preemptive import priority_preemptive
+from algorithms.rr import rr
 from algorithms.priority_rr import priority_round_robin
 from models.process import Process
 
@@ -37,13 +38,15 @@ def index():
         if algorithm == 'fcfs':
             scheduler, avg_turnaround_time, avg_waiting_time, cpu_utilization = fcfs(processes)
         elif algorithm == 'sjf':
-            scheduler = sjf(processes)
+            scheduler, avg_turnaround_time, avg_waiting_time, cpu_utilization = sjf(processes)
         elif algorithm == 'priority':
-            scheduler = priority(processes)
+            scheduler, avg_turnaround_time, avg_waiting_time, cpu_utilization = priority(processes)
+        elif algorithm == 'priority_p':
+            scheduler, _, avg_turnaround_time, avg_waiting_time, cpu_utilization = priority_preemptive(processes)
         elif algorithm == 'rr':
-            scheduler = round_robin(processes, quantum)
+            scheduler, _, avg_turnaround_time, avg_waiting_time, cpu_utilization = rr(processes, quantum)
         elif algorithm == 'priority_rr':
-            scheduler = priority_round_robin(processes, quantum)
+            scheduler, _, avg_turnaround_time, avg_waiting_time, cpu_utilization = priority_round_robin(processes, quantum)
         else: 
             return "There was an error receiving the algorithm type from the client."
 

@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const priorityInput = document.getElementById('priorityInput');
         const priorityNote = document.getElementById('priorityNote');
 
-        if (algorithm === "priority" || algorithm === "priority_rr") {
+        if (algorithm === "priority" || algorithm === "priority_p" || algorithm === "priority_rr") {
             priorityInput.style.display = 'block';
             document.getElementById('newPriority').required = true;
 
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const algorithm = document.getElementById('algorithm').value;
         const priorityColumn = document.getElementById('priorityColumn');
 
-        if (algorithm === "priority" || algorithm === "priority_rr") {
+        if (algorithm === "priority" || algorithm === "priority_p" || algorithm === "priority_rr") {
             priorityColumn.style.display = 'table-cell';
         } else {
             priorityColumn.style.display = 'none';
@@ -65,11 +65,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const newAlgorithm = this.value;
 
         // Clear the table when changing from priority-based algorithms to other algorithms or vice versa
-        if ((selectedAlgorithm === "priority" || selectedAlgorithm === "priority_rr") &&
-            (newAlgorithm !== "priority" && newAlgorithm !== "priority_rr")) {
+        if ((selectedAlgorithm === "priority" || selectedAlgorithm === "priority_p" || selectedAlgorithm === "priority_rr") &&
+            (newAlgorithm !== "priority"  && newAlgorithm !== "priority_p" && newAlgorithm !== "priority_rr")) {
             clearTable();
-        } else if ((selectedAlgorithm !== "priority" && selectedAlgorithm !== "priority_rr") &&
-            (newAlgorithm === "priority" || newAlgorithm === "priority_rr")) {
+        } else if ((selectedAlgorithm !== "priority" && selectedAlgorithm !== "priority_p" && selectedAlgorithm !== "priority_rr") &&
+            (newAlgorithm === "priority" || newAlgorithm === "priority_p" || newAlgorithm === "priority_rr")) {
             clearTable();
         }
 
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
             // Check if the priority column is visible and append it if needed
             const algorithm = document.getElementById('algorithm').value;
-            if (algorithm === "priority" || algorithm === "priority_rr") {
+            if (algorithm === "priority" || algorithm === "priority_p" || algorithm === "priority_rr") {
                 const newPriority = document.getElementById('newPriority').value.trim();
                 const tdPriority = document.createElement('td');
                 tdPriority.textContent = newPriority;
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
             // Check if priority column is present and add priority if needed
             const algorithm = document.getElementById('algorithm').value;
-            if (algorithm === "priority" || algorithm === "priority_rr") {
+            if (algorithm === "priority" || algorithm === "priority_p" || algorithm === "priority_rr") {
                 process.priority = cells[3].textContent;
             }
     
