@@ -6,11 +6,17 @@ def sjf(processes):
         processes (list): List of Process objects.
 
     Returns:
-        list: List of Process objects representing the order in which processes are scheduled.
+        list: List of tuples containing Process objects, turnaround times, and waiting times.
+        float: Average turnaround time.
+        float: Average waiting time.
+        float: CPU utilization.
     """
     # Initialize scheduler and current time
     scheduler = []
     current_time = 0
+    total_turnaround_time = 0
+    total_waiting_time = 0
+    total_cpu_time = 0
 
     # Sort processes based on arrival time
     sorted_processes = sorted(processes, key=lambda x: x.arrival_time)
@@ -36,10 +42,27 @@ def sjf(processes):
             # Record process completion time
             shortest_job.completion_time = current_time
 
+            # Calculate turnaround time and waiting time
+            turnaround_time = shortest_job.completion_time - shortest_job.arrival_time
+            waiting_time = turnaround_time - shortest_job.burst_time
+
+            # Update total turnaround time and total waiting time
+            total_turnaround_time += turnaround_time
+            total_waiting_time += waiting_time
+
             # Add process to scheduler
-            scheduler.append(shortest_job)
+            scheduler.append((shortest_job, turnaround_time, waiting_time))
+            
+            # Update CPU utilization time
+            total_cpu_time += shortest_job.burst_time
         else:
             # If no process is ready, wait until next arrival
             current_time = sorted_processes[0].arrival_time
 
-    return scheduler
+    # Calculate average turnaround time, average waiting time, and CPU utilization
+    num_processes = len(processes)
+    avg_turnaround_time = total_turnaround_time / num_processes
+    avg_waiting_time = total_waiting_time / num_processes
+    cpu_utilization = (total_cpu_time / current_time) * 100  # in percentage
+
+    return scheduler, avg_turnaround_time, avg_waiting_time, cpu_utilization
