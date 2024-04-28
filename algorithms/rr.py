@@ -1,6 +1,6 @@
 from queue import Queue
 
-def round_robin(processes, quantum):
+def rr(processes, quantum):
     """
     Simulates Round Robin (RR) scheduling algorithm using a simple queue.
 
@@ -13,7 +13,12 @@ def round_robin(processes, quantum):
     """
     # Initialize scheduler and current time
     scheduler = []
+    quantum_details = []
     current_time = 0
+    total_turnaround_time = 0
+    total_waiting_time = 0
+    total_cpu_time = 0
+
 
     # Create a queue for ready queue
     ready_queue = Queue()
@@ -23,6 +28,7 @@ def round_robin(processes, quantum):
 
     # Initialize index to track next process to arrive
     next_process_index = 0
+    original_burst_times = {process.pid:process.burst_time for process in sorted_processes}
 
     # Loop until all processes are completed
     while not ready_queue.empty() or next_process_index < len(sorted_processes):
@@ -50,16 +56,31 @@ def round_robin(processes, quantum):
             # Record process completion time if completed
             if current_process.burst_time <= 0:
                 current_process.completion_time = current_time
+                turnaround_time = current_process.completion_time - current_process.arrival_time
+                current_process.burst_time = original_burst_times[current_process.pid]
+                waiting_time = turnaround_time - current_process.burst_time
+                # Update total turnaround time and total waiting time
+                total_turnaround_time += turnaround_time
+                total_waiting_time += waiting_time
+                # Add process to scheduler
+                scheduler.append((current_process, turnaround_time, waiting_time))
 
             # Add process back to ready queue if burst time remains
             else:
                 ready_queue.put(current_process)
 
             # Add process to scheduler
-            scheduler.append(current_process)
+            quantum_details.append(current_process)
 
         # If no process is ready, wait until next arrival
         else:
             current_time = sorted_processes[next_process_index].arrival_time
+        
+    # Calculate average turnaround time, average waiting time, and CPU utilization
+    num_processes = len(processes)
+    avg_turnaround_time = total_turnaround_time / num_processes
+    avg_waiting_time = total_waiting_time / num_processes
+    cpu_utilization = (total_cpu_time / current_time) * 100  # in percentage
+    
 
-    return scheduler
+    return scheduler,quantum_details,avg_turnaround_time, avg_waiting_time, cpu_utilization
