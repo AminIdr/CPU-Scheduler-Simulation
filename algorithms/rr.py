@@ -1,6 +1,5 @@
 from queue import Queue
 
-# Bdel tmp f return
 def round_robin(processes, quantum):
     """
     Simulates Round Robin (RR) scheduling algorithm using a simple queue.
@@ -12,7 +11,6 @@ def round_robin(processes, quantum):
     Returns:
         list: List of Process objects representing the order in which processes are scheduled.
     """
-    tmp = []
     # Initialize scheduler and current time
     scheduler = []
     current_time = 0
@@ -59,10 +57,9 @@ def round_robin(processes, quantum):
 
             # Add process to scheduler
             scheduler.append(current_process)
-            tmp.append(current_time)
 
         # If no process is ready, wait until next arrival
         else:
             current_time = sorted_processes[next_process_index].arrival_time
 
-    return scheduler, tmp
+    return scheduler

@@ -9,13 +9,18 @@ document.addEventListener('DOMContentLoaded', function() {
     function togglePriorityVisibility() {
         const algorithm = document.getElementById('algorithm').value;
         const priorityInput = document.getElementById('priorityInput');
+        const priorityNote = document.getElementById('priorityNote');
 
         if (algorithm === "priority" || algorithm === "priority_rr") {
             priorityInput.style.display = 'block';
             document.getElementById('newPriority').required = true;
+
+            priorityNote.style.display = 'block';
         } else {
             priorityInput.style.display = 'none';
             document.getElementById('newPriority').required = false;
+
+            priorityNote.style.display = 'none';
         }
     }
 
@@ -102,9 +107,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Check if process with the same ID already exists
             if (addedProcesses[newProcessId]) {
-                alert("A process with the same ID already exists. Please choose a different ID.");
+                displayErrorMessage('idError', 'A process with the same ID already exists. Please choose a different ID.');
                 return;
             }
+            document.getElementById('idError').style.display = 'none';
 
             // Create a new table row
             const newRow = document.createElement('tr');
@@ -163,14 +169,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // Check if addedProcesses array is not empty
         if (Object.keys(addedProcesses).length === 0) {
-            alert("Please add processes before calculating.");
+            displayErrorMessage('noProcessError', 'Please add processes before calculating.');
             return;
         }
+        document.getElementById('noProcessError').style.display = 'none';
     
         // Retrieve data from the table and construct a JSON object
         const processRows = document.querySelectorAll('#processTableBody tr');
         const processes = [];
-        
+    
         processRows.forEach(row => {
             const process = {};
             const cells = row.querySelectorAll('td');
@@ -179,39 +186,64 @@ document.addEventListener('DOMContentLoaded', function() {
             process.burst_time = cells[2].textContent;
     
             // Check if priority column is present and add priority if needed
-            var algorithm = document.getElementById('algorithm').value;
+            const algorithm = document.getElementById('algorithm').value;
             if (algorithm === "priority" || algorithm === "priority_rr") {
                 process.priority = cells[3].textContent;
             }
     
             processes.push(process);
         });
-        // Send the processes data to the server using a POST request
+
+        let quantum = null;
+       // Check if quantum is needed based on the selected algorithm
+        if (selectedAlgorithm === "rr" || selectedAlgorithm === "priority_rr") {
+            quantum = document.getElementById('quantum').value.trim();
+        }
+
+        // Construct the request data object
+        const requestData = {
+            algorithm: selectedAlgorithm,
+            processes: processes
+        };
+
+        // Add quantum to request data if needed
+        if (quantum !== null) {
+            requestData.quantum = quantum;
+        }
+    
+
+        console.log(requestData);
+        // Send the data to the server using a POST request
         fetch('/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(processes)
+            body: JSON.stringify(requestData)
         })
         .then(response => {
             if (response.ok) {
                 // Process the response from the server if needed
                 // For now, let's just log a success message
-                console.log("Processes sent successfully to server.");
+                console.log("Data sent successfully to server.");
                 // Log the response from the server
                 response.text().then(data => {
                     console.log("Response from server:", data);
                 });
             } else {
-                console.error("Failed to send processes to server.");
+                console.error("Failed to send data to server.");
             }
         })
         .catch(error => {
-            console.error("Error sending processes to server:", error);
+            console.error("Error sending data to server:", error);
         });
     });
     
+    function displayErrorMessage(error, message) {
+        const errorMessage = document.getElementById(error);
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'inline';
+    }
     
 
 });
