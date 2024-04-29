@@ -296,11 +296,17 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function createGanttChart(tasks) {
         // Clear the existing chart
+
         d3.select("#chart").select("svg").remove();
-    
+        var divElement = document.getElementById("chart");
+        var h3Element = document.createElement("h3");
+        h3Element.textContent = "Gantt Chart";
+
+        // Append the h3 element to the div
+        divElement.appendChild(h3Element);
         // Set up the dimensions of the chart
         const margin = { top: 30, right: 30, bottom: 30, left: 60 };
-        const width = 800 - margin.left - margin.right;
+        const width = 500 - margin.left - margin.right;
         const height = 100 - margin.top - margin.bottom; // Reduced height for a single row
     
         // Create the SVG element

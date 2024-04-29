@@ -12,111 +12,120 @@
 
 </head>
 <body>
-    <div class="container">
-        <h1 class="mt-5 text-center">Scheduling Visualization</h1>
+    
+    <div class="container mt-3">
+       
+        <h1 id="title">Scheduling Visualization</h1>
+        <div class="row mt-4">
+            <div class="col-sm-6">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Processes:</h5>
+                  <form id="processForm" action="/" method="POST" class="mt-4">
+                    <!-- Inputs for Process ID, Arrival Time, Burst Time, and Priority -->
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="newProcessID" class="form-label">Process ID:</label>
+                            <input type="number" name="newProcessID" id="newProcessID" class="form-control" required min="1">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="newArrivalTime" class="form-label">Arrival Time:</label>
+                            <input type="number" name="newArrivalTime" id="newArrivalTime" class="form-control" required min="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="newBurstTime" class="form-label">Burst Time:</label>
+                            <input type="number" name="newBurstTime" id="newBurstTime" class="form-control" required min="1">
+                        </div>
+                        <div class="col-md-3" id="priorityInput" style="display: none;">
+                            <label for="newPriority" class="form-label">Priority:</label>
+                            <input type="number" name="newPriority" id="newPriority" class="form-control" min="1">
+                        </div>
+                    </div>
 
-        <form id="processForm" action="/" method="POST" class="mt-4">
-            <!-- Inputs for Process ID, Arrival Time, Burst Time, and Priority -->
-            <div class="row mb-3">
-                <div class="col-md-3">
-                    <label for="newProcessID" class="form-label">Process ID:</label>
-                    <input type="number" name="newProcessID" id="newProcessID" class="form-control" required min="1">
+
+                    <div class="row mb-3">
+                        <div class="col-md-9">
+                            <button type="button" id="addProcess" class="btn btn-primary">Add Process</button>
+                            <p id="idError" style="color: red; display: inline;"></p>
+                        </div>
+                    </div>
+                    <button type="button" id="import" class="btn btn-success">Import from CSV</button>
+
+                    <!-- Process Table -->
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Process ID</th>
+                                <th>Arrival Time</th>
+                                <th>Burst Time</th>
+                                <th id="priorityColumn">Priority</th>
+                            </tr>
+                        </thead>
+                        <tbody id="processTableBody">
+                            <!-- Rows will be added dynamically here -->
+                        </tbody>
+                    </table>
+
+                    <!-- Select algorithm -->
+                    <div class="row mb-3">
+                        <div class="">
+                            <label for="algorithm" class="form-label">Select Scheduling Algorithm:</label>
+                            <select name="algorithm" id="algorithm" class="form-select">
+                                <option value="fcfs">First-Come, First-Served (FCFS)</option>
+                                <option value="sjf">Shortest Job First (SJF)</option>
+                                <option value="priority">Priority Scheduling (Non-preemptive)</option>
+                                <option value="priority_p">Priority Scheduling (Preemptive)</option>
+                                <option value="rr">Round Robin (RR)</option>
+                                <option value="priority_rr">Priority Scheduling + RR</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3" id="quantumInput" style="display: none;">
+                            <label for="quantum" class="form-label">Quantum:</label>
+                            <input type="number" name="quantum" id="quantum" class="form-control" min="1">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-9">
+                            <button type="submit" id="calculate" class="btn btn-primary">Calculate</button>
+                            <p id="noProcessError" style="color: red;"></p>
+                        </div>
+                        <p id="priorityNote" style="display: none; font-style: italic;">Note: Lower numbers indicate higher priorities</p>
+                    </div>
+                </form>
                 </div>
-                <div class="col-md-3">
-                    <label for="newArrivalTime" class="form-label">Arrival Time:</label>
-                    <input type="number" name="newArrivalTime" id="newArrivalTime" class="form-control" required min="0">
-                </div>
-                <div class="col-md-3">
-                    <label for="newBurstTime" class="form-label">Burst Time:</label>
-                    <input type="number" name="newBurstTime" id="newBurstTime" class="form-control" required min="1">
-                </div>
-                <div class="col-md-3" id="priorityInput" style="display: none;">
-                    <label for="newPriority" class="form-label">Priority:</label>
-                    <input type="number" name="newPriority" id="newPriority" class="form-control" min="1">
-                </div>
+              </div>
             </div>
-
-
-            <div class="row mb-3">
-                <div class="col-md-9">
-                    <button type="button" id="addProcess" class="btn btn-primary">Add Process</button>
-                    <p id="idError" style="color: red; display: inline;"></p>
-                </div>
-            </div>
-            <button type="button" id="import" class="btn btn-success">Import from CSV</button>
-
-                <!-- Process Table -->
-                <table class="table">
-                <thead>
+            <div class="col-sm-6">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Scheduler Results</h5>
+                  <table class="table">
+                    <thead>
                     <tr>
-                        <th>Process ID</th>
-                        <th>Arrival Time</th>
-                        <th>Burst Time</th>
-                        <th id="priorityColumn">Priority</th>
+                        <th scope="col">Process ID</th>
+                        <th scope="col">Completion Time</th>
+                        <th scope="col">Turnaround Time</th>
+                        <th scope="col">Waiting Time</th>
                     </tr>
-                </thead>
-                <tbody id="processTableBody">
-                    <!-- Rows will be added dynamically here -->
-                </tbody>
-            </table>
-
-            <!-- Select algorithm -->
-            <div class="row mb-3">
-                <div class="col-md-3">
-                    <label for="algorithm" class="form-label">Select Scheduling Algorithm:</label>
-                    <select name="algorithm" id="algorithm" class="form-select">
-                        <option value="fcfs">First-Come, First-Served (FCFS)</option>
-                        <option value="sjf">Shortest Job First (SJF)</option>
-                        <option value="priority">Priority Scheduling (Non-preemptive)</option>
-                        <option value="priority_p">Priority Scheduling (Preemptive)</option>
-                        <option value="rr">Round Robin (RR)</option>
-                        <option value="priority_rr">Priority Scheduling + RR</option>
-                    </select>
-                </div>
-                <div class="col-md-3" id="quantumInput" style="display: none;">
-                    <label for="quantum" class="form-label">Quantum:</label>
-                    <input type="number" name="quantum" id="quantum" class="form-control" min="1">
+                    </thead>
+                    <tbody id="schedulerResults">
+                    <!-- Scheduler results will be dynamically added here -->
+                    </tbody>
+                </table>
+                <div id="chart">
+                </div>            
+                <div class="row mb-3">
+                    <div class="col-md-9">
+                        <button type="button" id="export" class="btn btn-success">Export to CSV</button>
+                        <button type="button" id="clear" class="btn btn-danger">Clear Table</button>
+                    </div>
                 </div>
             </div>
-
-            <div class="row mb-3">
-                <div class="col-md-9">
-                    <button type="submit" id="calculate" class="btn btn-primary">Calculate</button>
-                    <p id="noProcessError" style="color: red;"></p>
-                </div>
-                <p id="priorityNote" style="display: none; font-style: italic;">Note: Lower numbers indicate higher priorities</p>
+              </div>
             </div>
-
-
-
-        </form>
-        
-            <h3>Scheduler Results</h3>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th scope="col">Process ID</th>
-                  <th scope="col">Completion Time</th>
-                  <th scope="col">Turnaround Time</th>
-                  <th scope="col">Waiting Time</th>
-                </tr>
-              </thead>
-              <tbody id="schedulerResults">
-                <!-- Scheduler results will be dynamically added here -->
-              </tbody>
-            </table>
-            <h3>Gantt Chart</h3>
-            <div id="chart"></div>
-
-            
-            <div class="row mb-3">
-                <div class="col-md-9">
-                    <button type="button" id="export" class="btn btn-success">Export to CSV</button>
-                    <button type="button" id="clear" class="btn btn-danger">Clear Table</button>
-                </div>
-            </div>
-
-        
+          </div>
+       
     </div>
 
     <!-- Bootstrap JS (if needed) -->
