@@ -302,11 +302,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         var divElement = document.getElementById("chart");
         divElement.innerHTML = '';
-        var h3Element = document.createElement("h3");
-        h3Element.textContent = "Gantt Chart";
-
-        // Append the h3 element to the div
-        divElement.appendChild(h3Element);
+        var h5Element = document.createElement("h5");
+        h5Element.textContent = "Gantt Chart";
+        h5Element.className = 'card-title';
+        // Append the h5 element to the div
+        divElement.appendChild(h5Element);
         // Set up the dimensions of the chart
         const margin = { top: 30, right: 30, bottom: 30, left: 60 };
         const width = 500 - margin.left - margin.right;
@@ -368,74 +368,209 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     var cpuChart;
 
-function displayAvg(avgTurnaroundTime, avgWaitingTime, cpuUtilization) {
-    var avg = document.getElementById("avg");
-    avg.innerHTML = "";
-    var paragraph = document.createElement("p");
-    paragraph.innerHTML = "Average Turnaround Time: " + avgTurnaroundTime + "<br>" +
-        "Average Waiting Time: " + avgWaitingTime + "<br>" +
-        "CPU Utilization: " + cpuUtilization;
-    avg.appendChild(paragraph);
-    // CPU utilization data
-    var cpuUtilizationData = {
-        labels: ["Used", "Unused"],
-        datasets: [{
-            label: "CPU Utilization",
-            data: [cpuUtilization, 100 - cpuUtilization],
-            backgroundColor: [
-                'rgba(12,109,253)', // Used
-                'rgba(220,52,68)', // Unused
-            ],
-            borderColor: [
-                'rgba(12,109,253)', // Used
-                'rgba(220,52,68)', // Unused
-            ],
-            borderWidth: 1
-        }]
-    };
+    function displayAvg(avgTurnaroundTime, avgWaitingTime, cpuUtilization) {
+        var avg = document.getElementById("avg");
+        avg.innerHTML = "";
+        var paragraph = document.createElement("p");
+        paragraph.innerHTML = "<b>Average Turnaround Time: </b>" + avgTurnaroundTime + "<br>" +
+            "<b>Average Waiting Time: </b>" + avgWaitingTime + "<br>" +
+            "<b>CPU Utilization: </b>" + cpuUtilization;
+        avg.appendChild(paragraph);
+        // CPU utilization data
+        var cpuUtilizationData = {
+            labels: ["Used", "Unused"],
+            datasets: [{
+                label: "CPU Utilization",
+                data: [cpuUtilization, 100 - cpuUtilization],
+                backgroundColor: [
+                    'rgba(12,109,253)', // Used
+                    'rgba(220,52,68)', // Unused
+                ],
+                borderColor: [
+                    'rgba(12,109,253)', // Used
+                    'rgba(220,52,68)', // Unused
+                ],
+                borderWidth: 1
+            }]
+        };
 
-    // Get the canvas element
+        // Get the canvas element
 
-    var cpuChartCanvas = document.getElementById('cpuChart').getContext('2d');
-    cpuChartCanvas.width = 400
-    cpuChartCanvas.height = 400
-    if (cpuChart !== undefined) {
-        // Destroy the existing chart
-        cpuChart.destroy();
-    }
-    // Create the pie chart
-    cpuChart = new Chart(cpuChartCanvas, {
-        type: 'pie',
-        data: cpuUtilizationData,
-        options: {
-            responsive: false, // Set to true for responsive behavior
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'CPU Utilization'
+        var cpuChartCanvas = document.getElementById('cpuChart').getContext('2d');
+        cpuChartCanvas.width = 400
+        cpuChartCanvas.height = 400
+        if (cpuChart !== undefined) {
+            // Destroy the existing chart
+            cpuChart.destroy();
+        }
+        // Create the pie chart
+        cpuChart = new Chart(cpuChartCanvas, {
+            type: 'pie',
+            data: cpuUtilizationData,
+            options: {
+                responsive: false, // Set to true for responsive behavior
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'CPU Utilization'
+                    }
                 }
             }
-        }
-    });
-}
-function clearTableButton() {
-    // Find the table element
-    const processTableBody = document.getElementById('processTableBody');
-    var rows = processTableBody.querySelectorAll("tr");
-    
-    rows.forEach(function(row) {
-        row.parentNode.removeChild(row);
-    });
-    addedProcesses = {};
-    processTableBody.innerHTML = '';
-}
+        });
+    }
+    // Attach event listener to the "Clear Table" button
+    document.getElementById("clear").addEventListener("click", clearTable);
+        
 
-// Attach event listener to the "Clear Table" button
-document.getElementById("clear").addEventListener("click", clearTableButton);
+
+
+    document.getElementById('import').addEventListener('click', function() {
+        // Create a file input element
+        var input = document.createElement('input');
+        input.type = 'file';
     
+        // Trigger a click event on the file input element
+        input.click();
+    
+        // Event listener to handle file selection
+        input.addEventListener('change', function() {
+            var file = input.files[0];
+            var reader = new FileReader();
+    
+            reader.onload = function(event) {
+                var csvData = event.target.result;
+                var processData = parseCSV(csvData);
+                // Populate the process table with the extracted data
+                populateTable(processData);
+            };
+    
+            // Read the selected file as text
+            reader.readAsText(file);
+        });
+    });
+
+    // Function to parse CSV data
+    function parseCSV(csvData) {
+        var lines = csvData.split(/\r?\n/); // Split by \n or \r\n
+        var processData = [];
+        var hasPriorityColumn = false; // Flag to track if priority column exists
+
+        // Skip the first line (header) and start from index 1
+        for (var i = 1; i < lines.length; i++) {
+            var line = lines[i].trim();
+            if (line === '') continue; // Skip empty lines
+            var data = line.split(',');
+            addedProcesses[data[0]] = true;
+            var process = {
+                id: data[0],
+                arrivalTime: data[1],
+                burstTime: data[2]
+            };
+
+            // Check if a priority column exists
+            if (data.length > 3) {
+                hasPriorityColumn = true;
+                process.priority = data[3]; // Add priority to the process object
+            }
+
+            processData.push(process);
+        }
+
+        // If a priority column exists, switch the algorithm select option to 'priority'
+        if (hasPriorityColumn) {
+            document.getElementById('algorithm').value = 'priority';
+            selectedAlgorithm = "priority";
+            togglePriorityVisibility(); // Call function to toggle visibility of priority input
+            togglePriorityColumnVisibility();
+        }
+        else{
+            if (selectedAlgorithm === 'priority' || selectedAlgorithm === 'priority_p' || selectedAlgorithm === 'priority_rr'){
+                document.getElementById('algorithm').value = 'fcfs';
+                selectedAlgorithm = "fcfs";
+                togglePriorityVisibility();
+                togglePriorityColumnVisibility();
+            }
+        }
+
+        return processData;
+    }
+
+
+
+    
+    // Function to populate the process table with data
+    function populateTable(processData) {
+        var tableBody = document.getElementById('processTableBody');
+        tableBody.innerHTML = ''; // Clear existing rows
+
+        processData.forEach(function(process) {
+            var row = document.createElement('tr');
+            var idCell = document.createElement('td');
+            idCell.textContent = process.id;
+            var arrivalTimeCell = document.createElement('td');
+            arrivalTimeCell.textContent = process.arrivalTime;
+            var burstTimeCell = document.createElement('td');
+            burstTimeCell.textContent = process.burstTime;
+
+            row.appendChild(idCell);
+            row.appendChild(arrivalTimeCell);
+            row.appendChild(burstTimeCell);
+
+            // Check if priority exists in the process object
+            if (process.priority) {
+                var priorityCell = document.createElement('td');
+                priorityCell.textContent = process.priority;
+                row.appendChild(priorityCell);
+            }
+
+            tableBody.appendChild(row);
+        });
+    }
+
+    
+    // Function to export table data to CSV
+    function exportToCSV() {
+        // Get the table element
+        const table = document.getElementById('schedulerResults');
+
+        // Get all rows in the table body
+        const rows = table.querySelectorAll('tr');
+
+        // Create a CSV string to hold the data
+        let csvContent = 'data:text/csv;charset=utf-8,';
+
+        // Add column names to CSV string
+        const columnNames = ['Process ID', 'Completion Time', 'Turnaround Time', 'Waiting Time'];
+        csvContent += columnNames.join(',') + '\r\n';
+        
+        // Iterate over each row and extract cell data
+        rows.forEach(row => {
+            const rowData = [];
+            row.querySelectorAll('td').forEach(cell => {
+                rowData.push(cell.textContent);
+            });
+            csvContent += rowData.join(',') + '\r\n'; // Add row data to CSV string
+        });
+
+        // Encode the CSV string to URI format
+        const encodedUri = encodeURI(csvContent);
+
+        // Create a link element to trigger the download
+        const link = document.createElement('a');
+        link.setAttribute('href', encodedUri);
+        link.setAttribute('download', 'scheduler_results.csv');
+        
+        // Trigger the download
+        document.body.appendChild(link);
+        link.click();
+    }
+
+    // Add event listener to the export button
+    document.getElementById('export').addEventListener('click', exportToCSV);
+
 
 });
 
