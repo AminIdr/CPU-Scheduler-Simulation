@@ -12,6 +12,7 @@ def sjf(processes):
         float: CPU utilization.
     """
     # Initialize scheduler and current time
+    details = []
     scheduler = []
     current_time = 0
     total_turnaround_time = 0
@@ -35,6 +36,7 @@ def sjf(processes):
 
             # Select the shortest job
             shortest_job = ready_queue.pop(0)
+            details.append([shortest_job.pid,current_time, current_time + shortest_job.burst_time])
 
             # Update current time
             current_time += shortest_job.burst_time
@@ -65,4 +67,4 @@ def sjf(processes):
     avg_waiting_time = total_waiting_time / num_processes
     cpu_utilization = (total_cpu_time / current_time) * 100  # in percentage
 
-    return scheduler, avg_turnaround_time, avg_waiting_time, cpu_utilization
+    return scheduler,details, avg_turnaround_time, avg_waiting_time, cpu_utilization
