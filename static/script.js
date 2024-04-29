@@ -242,6 +242,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
             });
             // Call createGanttChart function with the tasks array
+            displayAvg(data.avgTurnaroundTime, data.avgWaitingTime, data.cpuUtilization);
             createGanttChart(tasks);
         })
         .catch(error => {
@@ -298,7 +299,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Clear the existing chart
 
         d3.select("#chart").select("svg").remove();
+        
         var divElement = document.getElementById("chart");
+        divElement.innerHTML = '';
         var h3Element = document.createElement("h3");
         h3Element.textContent = "Gantt Chart";
 
@@ -363,8 +366,76 @@ document.addEventListener('DOMContentLoaded', function() {
             .attr("y", height / 2)
             .text(d => d.task);
     }
+    var cpuChart;
+
+function displayAvg(avgTurnaroundTime, avgWaitingTime, cpuUtilization) {
+    var avg = document.getElementById("avg");
+    avg.innerHTML = "";
+    var paragraph = document.createElement("p");
+    paragraph.innerHTML = "Average Turnaround Time: " + avgTurnaroundTime + "<br>" +
+        "Average Waiting Time: " + avgWaitingTime + "<br>" +
+        "CPU Utilization: " + cpuUtilization;
+    avg.appendChild(paragraph);
+    // CPU utilization data
+    var cpuUtilizationData = {
+        labels: ["Used", "Unused"],
+        datasets: [{
+            label: "CPU Utilization",
+            data: [cpuUtilization, 100 - cpuUtilization],
+            backgroundColor: [
+                'rgba(12,109,253)', // Used
+                'rgba(220,52,68)', // Unused
+            ],
+            borderColor: [
+                'rgba(12,109,253)', // Used
+                'rgba(220,52,68)', // Unused
+            ],
+            borderWidth: 1
+        }]
+    };
+
+    // Get the canvas element
+
+    var cpuChartCanvas = document.getElementById('cpuChart').getContext('2d');
+    cpuChartCanvas.width = 400
+    cpuChartCanvas.height = 400
+    if (cpuChart !== undefined) {
+        // Destroy the existing chart
+        cpuChart.destroy();
+    }
+    // Create the pie chart
+    cpuChart = new Chart(cpuChartCanvas, {
+        type: 'pie',
+        data: cpuUtilizationData,
+        options: {
+            responsive: false, // Set to true for responsive behavior
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'CPU Utilization'
+                }
+            }
+        }
+    });
+}
+function clearTableButton() {
+    // Find the table element
+    const processTableBody = document.getElementById('processTableBody');
+    var rows = processTableBody.querySelectorAll("tr");
     
-    
+    rows.forEach(function(row) {
+        row.parentNode.removeChild(row);
+    });
+    addedProcesses = {};
+    processTableBody.innerHTML = '';
+}
+
+// Attach event listener to the "Clear Table" button
+document.getElementById("clear").addEventListener("click", clearTableButton);
     
 
 });
+

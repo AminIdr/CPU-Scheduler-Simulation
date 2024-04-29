@@ -80,7 +80,7 @@ def rr(processes, quantum):
     num_processes = len(processes)
     avg_turnaround_time = total_turnaround_time / num_processes
     avg_waiting_time = total_waiting_time / num_processes
-    cpu_utilization = (total_cpu_time / current_time) * 100  # in percentage
+    cpu_utilization = (total_turnaround_time - total_waiting_time) / current_time * 100
     
 
     return scheduler,quantum_details,avg_turnaround_time, avg_waiting_time, cpu_utilization

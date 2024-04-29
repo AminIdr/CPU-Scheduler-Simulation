@@ -35,6 +35,6 @@ def priority_preemptive(processes):
     avg_waiting_time = total_waiting_time / n
     
     avg_turnaround_time = total_turnaround_time / n
-    cpu_utilization = (total_turnaround_time - total_waiting_time) / current_time
+    cpu_utilization = (total_turnaround_time - total_waiting_time) / current_time * 100
 
     return scheduler, execution_order, avg_turnaround_time, avg_waiting_time, cpu_utilization

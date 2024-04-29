@@ -43,7 +43,7 @@ input[type="number"] {
     font-family: Arial, sans-serif;
 }
 .task {
-    fill: steelblue;
+    fill: rgb(12,109,253);
 }
 .task-label {
     font-size: 12px;
