@@ -259,8 +259,9 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log(result);
             // Convert values to integers
             const processId = parseInt(result[0]);
-            const turnaroundTime = parseInt(result[1]);
-            const waitingTime = parseInt(result[2]);
+            const completionTime = parseInt(result[1]);
+            const turnaroundTime = parseInt(result[2]);
+            const waitingTime = parseInt(result[3]);
     
             // Create a new row
             const row = document.createElement('tr');
@@ -268,6 +269,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Create cells for each data item in the result tuple
             const processIdCell = document.createElement('td');
             processIdCell.textContent = processId;
+            const completionTimeCell = document.createElement('td');
+            completionTimeCell.textContent = completionTime;
             const turnaroundTimeCell = document.createElement('td');
             turnaroundTimeCell.textContent = turnaroundTime;
             const waitingTimeCell = document.createElement('td');
@@ -275,6 +278,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
             // Append cells to the row
             row.appendChild(processIdCell);
+            row.appendChild(completionTimeCell);
             row.appendChild(turnaroundTimeCell);
             row.appendChild(waitingTimeCell);
     

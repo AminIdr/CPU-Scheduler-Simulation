@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gantt Chart</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+    /* Add any CSS styles here */
+    #chart {
+        width: 800px;
+        height: 400px;
+        margin: 20px auto;
+    }
+    .task {
+        fill: steelblue;
+    }
+</style>
+</head>
+<body>
+<div id="chart"></div>
+<script>
+// Sample data for the Gantt chart
+const tasks = [
+    { task: "Task 1", startDate: 0, endDate: 5 },
+    { task: "Task 2", startDate: 6, endDate: 10 },
+    { task: "Task 3", startDate: 11, endDate: 15 }
+];
+
+// Set up the dimensions of the chart
+const margin = { top: 20, right: 30, bottom: 30, left: 60 };
+const width = 800 - margin.left - margin.right;
+const height = 400 - margin.top - margin.bottom;
+
+// Create the SVG element
+const svg = d3.select("#chart")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+// Create scales for x and y axes
+const xScale = d3.scaleLinear()
+    .domain([0, d3.max(tasks, d => d.endDate)])
+    .range([0, width]);
+
+const yScale = d3.scaleBand()
+    .domain(tasks.map(d => d.task))
+    .range([0, height])
+    .padding(0.1);
+
+// Add x axis
+svg.append("g")
+    .attr("transform", `translate(0,${height})`)
+    .call(d3.axisBottom(xScale));
+
+// Add y axis
+svg.append("g")
+    .call(d3.axisLeft(yScale));
+
+// Add bars for tasks
+svg.selectAll(".task")
+    .data(tasks)
+    .enter().append("rect")
+    .attr("class", "task")
+    .attr("x", d => xScale(d.startDate))
+    .attr("y", d => yScale(d.task))
+    .attr("width", d => xScale(d.endDate) - xScale(d.startDate))
+    .attr("height", yScale.bandwidth());
+</script>
+</body>
+</html>

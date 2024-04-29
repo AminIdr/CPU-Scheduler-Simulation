@@ -44,14 +44,15 @@ def index():
         elif algorithm == 'priority_p':
             scheduler, _, avg_turnaround_time, avg_waiting_time, cpu_utilization = priority_preemptive(processes)
         elif algorithm == 'rr':
-            scheduler, _, avg_turnaround_time, avg_waiting_time, cpu_utilization = rr(processes, quantum)
+            scheduler, a, avg_turnaround_time, avg_waiting_time, cpu_utilization = rr(processes, quantum)
+            print(a)
         elif algorithm == 'priority_rr':
             scheduler, _, avg_turnaround_time, avg_waiting_time, cpu_utilization = priority_round_robin(processes, quantum)
         else: 
             return "There was an error receiving the algorithm type from the client."
 
         # Create a list of tuples containing scheduler results
-        scheduler_results = [(process.pid, turnaround_time, waiting_time) for process, turnaround_time, waiting_time in scheduler]
+        scheduler_results = [(process.pid, process.completion_time, turnaround_time, waiting_time) for process, turnaround_time, waiting_time in scheduler]
         # scheduler_results_json = [(process.pid, turnaround_time, waiting_time) for process, turnaround_time, waiting_time in scheduler_results]
         print(scheduler_results)
         # print(scheduler_results_json)
