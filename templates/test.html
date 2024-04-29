@@ -9,11 +9,22 @@
     /* Add any CSS styles here */
     #chart {
         width: 800px;
-        height: 400px;
+        height: 200px; /* Reduced height for a single row */
         margin: 20px auto;
+        font-family: Arial, sans-serif;
     }
     .task {
         fill: steelblue;
+    }
+    .task-label {
+        font-size: 12px;
+        text-anchor: middle;
+        fill: white;
+    }
+    .chart-title {
+        font-size: 16px;
+        font-weight: bold;
+        text-anchor: middle;
     }
 </style>
 </head>
@@ -28,9 +39,9 @@ const tasks = [
 ];
 
 // Set up the dimensions of the chart
-const margin = { top: 20, right: 30, bottom: 30, left: 60 };
+const margin = { top: 30, right: 30, bottom: 30, left: 60 };
 const width = 800 - margin.left - margin.right;
-const height = 400 - margin.top - margin.bottom;
+const height = 200 - margin.top - margin.bottom; // Reduced height for a single row
 
 // Create the SVG element
 const svg = d3.select("#chart")
@@ -40,24 +51,17 @@ const svg = d3.select("#chart")
     .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
-// Create scales for x and y axes
+// Create scales for x axis
 const xScale = d3.scaleLinear()
     .domain([0, d3.max(tasks, d => d.endDate)])
     .range([0, width]);
 
-const yScale = d3.scaleBand()
-    .domain(tasks.map(d => d.task))
-    .range([0, height])
-    .padding(0.1);
-
-// Add x axis
+// Add x axis with ticks at start and end dates
 svg.append("g")
     .attr("transform", `translate(0,${height})`)
-    .call(d3.axisBottom(xScale));
-
-// Add y axis
-svg.append("g")
-    .call(d3.axisLeft(yScale));
+    .call(d3.axisBottom(xScale)
+        .tickValues(tasks.flatMap(d => [d.startDate, d.endDate])) // Set tick values to start and end dates
+        .tickFormat(d3.format("d"))); // Display tick values as integers
 
 // Add bars for tasks
 svg.selectAll(".task")
@@ -65,9 +69,20 @@ svg.selectAll(".task")
     .enter().append("rect")
     .attr("class", "task")
     .attr("x", d => xScale(d.startDate))
-    .attr("y", d => yScale(d.task))
+    .attr("y", 0) // Adjusted y position
     .attr("width", d => xScale(d.endDate) - xScale(d.startDate))
-    .attr("height", yScale.bandwidth());
+    .attr("height", height) // Adjusted height of the boxes
+    .append("title")
+    .text(d => d.task);
+
+// Add task labels
+svg.selectAll(".task-label")
+    .data(tasks)
+    .enter().append("text")
+    .attr("class", "task-label")
+    .attr("x", d => (xScale(d.startDate) + xScale(d.endDate)) / 2)
+    .attr("y", height / 2) // Center vertically
+    .text(d => d.task);
 </script>
 </body>
 </html>

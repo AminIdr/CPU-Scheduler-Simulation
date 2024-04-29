@@ -8,6 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
 </head>
 <body>
     <div class="container">
@@ -18,7 +20,7 @@
             <div class="row mb-3">
                 <div class="col-md-3">
                     <label for="newProcessID" class="form-label">Process ID:</label>
-                    <input type="number" name="newProcessID" id="newProcessID" class="form-control" required min="0">
+                    <input type="number" name="newProcessID" id="newProcessID" class="form-control" required min="1">
                 </div>
                 <div class="col-md-3">
                     <label for="newArrivalTime" class="form-label">Arrival Time:</label>
@@ -26,13 +28,14 @@
                 </div>
                 <div class="col-md-3">
                     <label for="newBurstTime" class="form-label">Burst Time:</label>
-                    <input type="number" name="newBurstTime" id="newBurstTime" class="form-control" required min="0">
+                    <input type="number" name="newBurstTime" id="newBurstTime" class="form-control" required min="1">
                 </div>
                 <div class="col-md-3" id="priorityInput" style="display: none;">
                     <label for="newPriority" class="form-label">Priority:</label>
-                    <input type="number" name="newPriority" id="newPriority" class="form-control" min="0">
+                    <input type="number" name="newPriority" id="newPriority" class="form-control" min="1">
                 </div>
             </div>
+
 
             <div class="row mb-3">
                 <div class="col-md-9">
@@ -40,6 +43,7 @@
                     <p id="idError" style="color: red; display: inline;"></p>
                 </div>
             </div>
+            <button type="button" id="import" class="btn btn-success">Import from CSV</button>
 
                 <!-- Process Table -->
                 <table class="table">
@@ -101,7 +105,17 @@
                 <!-- Scheduler results will be dynamically added here -->
               </tbody>
             </table>
-          
+            <h3>Gantt Chart</h3>
+            <div id="chart"></div>
+
+            
+            <div class="row mb-3">
+                <div class="col-md-9">
+                    <button type="button" id="export" class="btn btn-success">Export to CSV</button>
+                    <button type="button" id="clear" class="btn btn-danger">Clear Table</button>
+                </div>
+            </div>
+
         
     </div>
 
@@ -109,5 +123,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS -->
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+
 </body>
 </html>

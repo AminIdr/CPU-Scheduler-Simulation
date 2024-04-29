@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('algorithm').addEventListener('change', function() {
         togglePriorityVisibility();
         toggleQuantumVisibility();
-        
+
         const newAlgorithm = this.value;
 
         // Clear the table when changing from priority-based algorithms to other algorithms or vice versa
@@ -232,9 +232,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .then(data => {
-            console.log(data.schedulerResults);
-            // Display the scheduler results in the table
             displaySchedulerResults(data.schedulerResults, data.avgTurnaroundTime, data.avgWaitingTime, data.cpuUtilization);
+            // Convert data.detailedSchedulerResults into tasks array
+            const tasks = data.detailedSchedulerResults.map(task => {
+                return {
+                    task: task[0], // Task name
+                    startDate: task[1], // Start date
+                    endDate: task[2] // End date
+                };
+            });
+            // Call createGanttChart function with the tasks array
+            createGanttChart(tasks);
         })
         .catch(error => {
             console.error("Error sending processes to server:", error);
@@ -256,7 +264,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Loop through scheduler results and create rows in the table
         schedulerResults.forEach(result => {
-            console.log(result);
             // Convert values to integers
             const processId = parseInt(result[0]);
             const completionTime = parseInt(result[1]);
@@ -287,8 +294,71 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-  
-  
+    function createGanttChart(tasks) {
+        // Clear the existing chart
+        d3.select("#chart").select("svg").remove();
+    
+        // Set up the dimensions of the chart
+        const margin = { top: 30, right: 30, bottom: 30, left: 60 };
+        const width = 800 - margin.left - margin.right;
+        const height = 100 - margin.top - margin.bottom; // Reduced height for a single row
+    
+        // Create the SVG element
+        const svg = d3.select("#chart")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+    
+        // Create scales for x axis
+        const xScale = d3.scaleLinear()
+            .domain([0, d3.max(tasks, d => d.endDate)])
+            .range([0, width]);
+    
+        // Add x axis with ticks at start and end dates
+        svg.append("g")
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(xScale)
+                .tickValues([0, ...tasks.flatMap(d => [d.startDate, d.endDate])]) // Include 0 as a tick value
+                .tickFormat(d3.format("d"))); // Display tick values as integers
+    
+        // Add borders between tasks
+        svg.selectAll(".task-border")
+            .data(tasks)
+            .enter().append("rect")
+            .attr("class", "task-border")
+            .attr("x", d => xScale(d.startDate))
+            .attr("y", 0) // Adjusted y position
+            .attr("width", d => xScale(d.endDate) - xScale(d.startDate))
+            .attr("height", height) // Adjusted height of the boxes
+            .attr("fill", "none")
+            .attr("stroke", "black")
+            .attr("stroke-width", 1);
+    
+        // Add bars for tasks
+        svg.selectAll(".task")
+            .data(tasks)
+            .enter().append("rect")
+            .attr("class", "task")
+            .attr("x", d => xScale(d.startDate) + 1) // Adjusted x position to create borders
+            .attr("y", 1) // Adjusted y position to create borders
+            .attr("width", d => xScale(d.endDate) - xScale(d.startDate) - 2) // Adjusted width to create borders
+            .attr("height", height - 2) // Adjusted height to create borders
+            .append("title")
+            .text(d => d.task);
+    
+        // Add task labels
+        svg.selectAll(".task-label")
+            .data(tasks)
+            .enter().append("text")
+            .attr("class", "task-label")
+            .attr("x", d => (xScale(d.startDate) + xScale(d.endDate)) / 2)
+            .attr("y", height / 2)
+            .text(d => d.task);
+    }
+    
+    
     
 
 });
