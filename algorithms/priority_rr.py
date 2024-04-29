@@ -51,10 +51,11 @@ def priority_round_robin(processes, quantum):
 
         # Execute process for the given quantum or until completion
         execution_time = min(remaining_quantum, current_process.burst_time)
+        quantum_details.append([current_process.pid,current_time,current_time+execution_time] )
+
         current_time += execution_time
         remaining_quantum -= execution_time
         current_process.burst_time -= execution_time
-        quantum_details.append([current_process,current_time])
 
         # Record process completion time if completed
         if current_process.burst_time <= 0:

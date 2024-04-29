@@ -14,7 +14,11 @@ def priority_preemptive(processes):
             highest_priority_process = min(available_processes, key=lambda x: x.priority)
             queue.append(highest_priority_process)
             remaining_time[highest_priority_process.pid] -= 1
-            execution_order.append(highest_priority_process)
+            if(execution_order and execution_order[-1][0] == highest_priority_process.pid):
+                execution_order[-1][2] += 1
+            else:
+                execution_order.append([highest_priority_process.pid, current_time, current_time + 1])
+            
             current_time += 1
             if remaining_time[highest_priority_process.pid] == 0:
                 completed_processes += 1

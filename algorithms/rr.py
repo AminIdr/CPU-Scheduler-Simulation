@@ -70,7 +70,7 @@ def rr(processes, quantum):
                 ready_queue.put(current_process)
 
             # Add process to scheduler
-            quantum_details.append(current_process)
+            quantum_details.append([current_process.pid,current_time - execution_time,current_time])
 
         # If no process is ready, wait until next arrival
         else:
