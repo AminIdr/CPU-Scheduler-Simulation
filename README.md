@@ -74,9 +74,9 @@ Furthermore, the application provides a pie chart illustrating CPU utilization, 
 
 These features collectively enhance the user experience by providing detailed and visual representations of scheduling results, enabling users to make informed decisions and comparisons between different scheduling algorithms.
 ##### 4.4.1 Example of Gantt Chart
-
+![Gantt Chart Example](https://github.com/AminIdr/CPU-Scheduler-Simulation/blob/main/images/gantt.png?raw=true)
 ##### 4.4.2 Example of CPU Utilization Pie Chart
-
+![CPU Utilization](https://github.com/AminIdr/CPU-Scheduler-Simulation/blob/main/images/cpu-utilization.png?raw=true)
 ---
 
 ### 5. Testing Cases
