@@ -81,13 +81,6 @@ These features collectively enhance the user experience by providing detailed an
 
 ### 5. Testing Cases
 
-#### 5.1 Input Validation:
-- Test cases cover scenarios such as duplicate process IDs, negative arrival times, zero burst times, and invalid priority values.
-- Input validation ensures that only valid data is accepted and processed.
-
-#### 5.2 Algorithm Testing:
-- Test cases are designed to validate the correctness and efficiency of each scheduling algorithm.
-- Edge cases and boundary conditions are considered to assess algorithm behavior under different scenarios.
 
 ---
 
