@@ -199,7 +199,6 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('newArrivalTime').setAttribute('required', true);
             document.getElementById('newBurstTime').setAttribute('required', true);
             document.getElementById('newPriority').setAttribute('required', true);
-
             return;
         }
         document.getElementById('noProcessError').style.display = 'none';
