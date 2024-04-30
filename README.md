@@ -117,7 +117,7 @@ The Round Robin algorithm allocates a fixed time slice (quantum) to each process
 #### 7.2 Priority-Based Algorithms
 
 For this subsection, we will use the following test case and evaluate the priority-based scheduling algorithms:
-![Priority Test Case](https://github.com/AminIdr/CPU-Scheduler-Simulation/blob/main/images/priority.png?raw=true)
+![Priority Test Case](https://github.com/AminIdr/CPU-Scheduler-Simulation/blob/main/images/priority-test.png?raw=true)
 
 ##### 7.2.1 Priority Non-Preemptive
 
