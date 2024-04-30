@@ -80,12 +80,11 @@ document.addEventListener('DOMContentLoaded', function() {
     var tooglerandom = false;
     // Add event listener to the algorithm select box to update the selected algorithm variable and toggle priority column visibility
     document.getElementById('algorithm').addEventListener('change', function() {
-        if (tooglerandom) {
+        
             togglePriorityRangeVisibility();
-        }
-        else{
+       
             togglePriorityVisibility();
-        }
+        
         toggleQuantumVisibility();
         const newAlgorithm = this.value;
 
@@ -187,17 +186,20 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault(); // Prevent default form submission behavior
     
         // Remove the required attribute from input fields
-            document.getElementById('newProcessID').removeAttribute('required');
-            document.getElementById('newArrivalTime').removeAttribute('required');
-            document.getElementById('newBurstTime').removeAttribute('required');
-            document.getElementById('newPriority').removeAttribute('required');
+        document.getElementById('newProcessID').removeAttribute('required');
+        document.getElementById('newArrivalTime').removeAttribute('required');
+        document.getElementById('newBurstTime').removeAttribute('required');
+        document.getElementById('newPriority').removeAttribute('required');
         
-        
-       
     
         // Check if addedProcesses array is not empty
         if (Object.keys(addedProcesses).length === 0) {
             displayErrorMessage('noProcessError', 'Please add processes before calculating.');
+            document.getElementById('newProcessID').setAttribute('required', true);
+            document.getElementById('newArrivalTime').setAttribute('required', true);
+            document.getElementById('newBurstTime').setAttribute('required', true);
+            document.getElementById('newPriority').setAttribute('required', true);
+
             return;
         }
         document.getElementById('noProcessError').style.display = 'none';
@@ -606,6 +608,7 @@ document.getElementById('generateRandomProcesses').addEventListener('click', gen
 // Function to generate random processes
 function generateRandomProcesses() {
     togglePriorityVisibility();
+
     var algorithm = document.getElementById('algorithm').value;
     const numProcesses = parseInt(document.getElementById('numProcesses').value);
     const minArrivalTime = parseInt(document.getElementById('arrivalTimeMin').value);
