@@ -9,16 +9,19 @@ def rr(processes, quantum):
         quantum (int): Time quantum for each process.
 
     Returns:
-        list: List of Process objects representing the order in which processes are scheduled.
+        list: List of tuples containing Process objects, turnaround times, and waiting times.
+        list: List of lists containing quantum details (pid, start time, end time).
+        float: Average turnaround time.
+        float: Average waiting time.
+        float: CPU utilization.
     """
     # Initialize scheduler and current time
-    scheduler = []
-    quantum_details = []
+    scheduler = []  # Store scheduling information (process, turnaround time, waiting time)
+    quantum_details = []  # Store details of each quantum (pid, start time, end time)
     current_time = 0
     total_turnaround_time = 0
     total_waiting_time = 0
     total_cpu_time = 0
-
 
     # Create a queue for ready queue
     ready_queue = Queue()
@@ -28,7 +31,7 @@ def rr(processes, quantum):
 
     # Initialize index to track next process to arrive
     next_process_index = 0
-    original_burst_times = {process.pid:process.burst_time for process in sorted_processes}
+    original_burst_times = {process.pid: process.burst_time for process in sorted_processes}
 
     # Loop until all processes are completed
     while not ready_queue.empty() or next_process_index < len(sorted_processes):
@@ -70,7 +73,7 @@ def rr(processes, quantum):
                 ready_queue.put(current_process)
 
             # Add process to scheduler
-            quantum_details.append([current_process.pid,current_time - execution_time,current_time])
+            quantum_details.append([current_process.pid, current_time - execution_time, current_time])
 
         # If no process is ready, wait until next arrival
         else:
@@ -82,5 +85,4 @@ def rr(processes, quantum):
     avg_waiting_time = total_waiting_time / num_processes
     cpu_utilization = (total_turnaround_time - total_waiting_time) / current_time * 100
     
-
-    return scheduler,quantum_details,avg_turnaround_time, avg_waiting_time, cpu_utilization
+    return scheduler, quantum_details, avg_turnaround_time, avg_waiting_time, cpu_utilization

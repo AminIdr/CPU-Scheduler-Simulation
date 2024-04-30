@@ -77,10 +77,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
     togglePriorityRangeVisibility();
-
+    var tooglerandom = false;
     // Add event listener to the algorithm select box to update the selected algorithm variable and toggle priority column visibility
     document.getElementById('algorithm').addEventListener('change', function() {
-        if (document.getElementById('newProcessID').value == "") {
+        if (tooglerandom) {
             togglePriorityRangeVisibility();
         }
         else{
@@ -605,6 +605,7 @@ document.getElementById('generateRandomProcesses').addEventListener('click', gen
 
 // Function to generate random processes
 function generateRandomProcesses() {
+    togglePriorityVisibility();
     var algorithm = document.getElementById('algorithm').value;
     const numProcesses = parseInt(document.getElementById('numProcesses').value);
     const minArrivalTime = parseInt(document.getElementById('arrivalTimeMin').value);
@@ -682,6 +683,7 @@ function generateRandomProcesses() {
 }
         // Add an event listener to the toggle button
         document.getElementById('toggleRandomInputs').addEventListener('click', function() {
+            tooglerandom = !tooglerandom;
             // Get the div containing the random inputs
             var randomInputsDiv = document.getElementById('randomInputs');
             var normalInputsDiv = document.getElementById('normalInputs');

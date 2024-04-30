@@ -7,13 +7,14 @@ def sjf(processes):
 
     Returns:
         list: List of tuples containing Process objects, turnaround times, and waiting times.
+        list: List of lists containing scheduling details (pid, start time, end time).
         float: Average turnaround time.
         float: Average waiting time.
         float: CPU utilization.
     """
     # Initialize scheduler and current time
-    details = []
-    scheduler = []
+    details = []  # Store details of each process execution (pid, start time, end time)
+    scheduler = []  # Store scheduling information (process, turnaround time, waiting time)
     current_time = 0
     total_turnaround_time = 0
     total_waiting_time = 0
@@ -36,7 +37,7 @@ def sjf(processes):
 
             # Select the shortest job
             shortest_job = ready_queue.pop(0)
-            details.append([shortest_job.pid,current_time, current_time + shortest_job.burst_time])
+            details.append([shortest_job.pid, current_time, current_time + shortest_job.burst_time])
 
             # Update current time
             current_time += shortest_job.burst_time
@@ -67,4 +68,4 @@ def sjf(processes):
     avg_waiting_time = total_waiting_time / num_processes
     cpu_utilization = (total_turnaround_time - total_waiting_time) / current_time * 100
 
-    return scheduler,details, avg_turnaround_time, avg_waiting_time, cpu_utilization
+    return scheduler, details, avg_turnaround_time, avg_waiting_time, cpu_utilization

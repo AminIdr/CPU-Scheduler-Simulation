@@ -7,6 +7,7 @@ def fcfs(processes):
 
     Returns:
         list: List of tuples containing Process objects, turnaround times, and waiting times.
+        list: List of lists containing scheduling details (pid, start time, end time).        
         float: Average turnaround time.
         float: Average waiting time.
         float: CPU utilization.

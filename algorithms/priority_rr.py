@@ -2,22 +2,27 @@ from collections import defaultdict, deque
 
 def priority_round_robin(processes, quantum):
     """
-    Simulates Priority-based Round Robin scheduling algorithm using separate queues for each priority level.
+    Simulates Priority Round Robin scheduling algorithm.
 
     Args:
         processes (list): List of Process objects.
         quantum (int): Time quantum for each process.
 
     Returns:
-        list: List of Process objects representing the order in which processes are scheduled.
+        list: List of tuples containing Process objects, turnaround times, and waiting times.
+        list: List of lists containing quantum details (pid, start time, end time).
+        float: Average turnaround time.
+        float: Average waiting time.
+        float: CPU utilization.
     """
+
     # Initialize scheduler, current time, and temporary list
     scheduler = []
     current_time = 0
     total_waiting_time = 0
     total_turnaround_time = 0
-    quantum_details = []
-    original_burst_times = {process.pid:process.burst_time for process in processes}
+    quantum_details = []  # Stores details of each quantum (pid, start time, end time)
+    original_burst_times = {process.pid: process.burst_time for process in processes}
 
     # Create separate queues for each priority level
     priority_queues = defaultdict(deque)
@@ -28,7 +33,7 @@ def priority_round_robin(processes, quantum):
     # Keep track of the currently running process and remaining time quantum
     current_process = None
     remaining_quantum = 0
-    
+
     # Loop until all processes are completed
     while process_queue or any(priority_queues.values()) or current_process:
 
@@ -51,7 +56,7 @@ def priority_round_robin(processes, quantum):
 
         # Execute process for the given quantum or until completion
         execution_time = min(remaining_quantum, current_process.burst_time)
-        quantum_details.append([current_process.pid,current_time,current_time+execution_time] )
+        quantum_details.append([current_process.pid, current_time, current_time + execution_time])
 
         current_time += execution_time
         remaining_quantum -= execution_time
@@ -60,12 +65,12 @@ def priority_round_robin(processes, quantum):
         # Record process completion time if completed
         if current_process.burst_time <= 0:
             current_process.completion_time = current_time
-            turaround_time = current_time - current_process.arrival_time
+            turnaround_time = current_time - current_process.arrival_time
             current_process.burst_time = original_burst_times[current_process.pid]
-            waiting_time = turaround_time - current_process.burst_time
+            waiting_time = turnaround_time - current_process.burst_time
             total_waiting_time += waiting_time
-            total_turnaround_time += turaround_time
-            scheduler.append((current_process, turaround_time, waiting_time))
+            total_turnaround_time += turnaround_time
+            scheduler.append((current_process, turnaround_time, waiting_time))
             
             current_process = None
             
@@ -77,8 +82,12 @@ def priority_round_robin(processes, quantum):
         if remaining_quantum <= 0 and current_process:
             priority_queues[current_process.priority].append(current_process)
             current_process = None
+
+    # Calculate average turnaround time, average waiting time, and CPU utilization
     n = len(processes)
     avg_turnaround_time = total_turnaround_time / n
     avg_waiting_time = total_waiting_time / n
     cpu_utilization = (total_turnaround_time - total_waiting_time) / current_time * 100
+    
+    # Return scheduling information
     return scheduler, quantum_details, avg_turnaround_time, avg_waiting_time, cpu_utilization
