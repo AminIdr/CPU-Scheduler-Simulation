@@ -83,8 +83,58 @@ These features collectively enhance the user experience by providing detailed an
 ![CPU Utilization](https://github.com/AminIdr/CPU-Scheduler-Simulation/blob/main/images/cpu-utilization.png?raw=true)
 ---
 
-### 5. Testing Cases
+### 7. Testing
 
+In this section, we will perform several test cases to demonstrate the correct implementation of the scheduling algorithms.
+
+#### Non-Priority Based Algorithms
+
+For this subsection, we will use the following example test case:
+
+![Non-priority Test Case](https://github.com/AminIdr/CPU-Scheduler-Simulation/blob/main/images/nonpriority-test.png?raw=true)
+
+##### First-Come, First-Served (FCFS)
+
+The FCFS algorithm works by executing processes in the order they arrive, with no preemption. Here's a screenshot of the scheduling results applied to the test case:
+
+![FCFS Results](https://github.com/AminIdr/CPU-Scheduler-Simulation/blob/main/images/fcfs1.png?raw=true)
+![FCFS Results 2](https://github.com/AminIdr/CPU-Scheduler-Simulation/blob/main/images/fcfs2.png?raw=true)
+
+##### Shortest Job First (SJF)
+
+The SJF algorithm selects the process with the shortest burst time for execution first, resulting in minimized average waiting time. Here's a screenshot of the scheduling results applied to the test case:
+
+![SJF Results](https://github.com/AminIdr/CPU-Scheduler-Simulation/blob/main/images/sjf1.png?raw=true)
+![SJF Results](https://github.com/AminIdr/CPU-Scheduler-Simulation/blob/main/images/sjf2.png?raw=true)
+
+##### Round Robin (RR)
+
+The Round Robin algorithm allocates a fixed time slice (quantum) to each process in a cyclic manner, allowing fair execution among processes. Here's a screenshot of the scheduling results applied to the test case with a quantum set to 2:
+
+![Round Robin Results](https://github.com/AminIdr/CPU-Scheduler-Simulation/blob/main/images/rr1.png?raw=true)
+![Round Robin Results](https://github.com/AminIdr/CPU-Scheduler-Simulation/blob/main/images/rr2.png?raw=true)
+
+#### Priority-Based Algorithms
+
+For this subsection, we will use the same test case and evaluate the priority-based scheduling algorithms.
+
+##### Priority Preemptive
+
+The Priority Preemptive algorithm executes the highest priority process currently in the ready queue, preempting lower priority processes if necessary. Here's a screenshot of the scheduling results applied to the test case:
+
+![Priority Preemptive Results](https://github.com/AminIdr/CPU-Scheduler-Simulation/blob/main/images/nonpriority-test.png?raw=true)
+
+##### Priority Non-Preemptive
+
+The Priority Non-Preemptive algorithm executes the highest priority process in the ready queue without preemption, allowing the currently running process to complete its execution. Here's a screenshot of the scheduling results applied to the test case:
+
+![Priority Non-Preemptive Results](https://github.com/AminIdr/CPU-Scheduler-Simulation/blob/main/images/nonpriority-test.png?raw=true)
+
+##### Priority with Round Robin
+
+The Priority with Round Robin algorithm combines priority-based scheduling with Round Robin, allowing processes with the same priority level to share CPU time fairly. Here's a screenshot of the scheduling results applied to the test case:
+
+![Priority with Round Robin Results](https://github.com/AminIdr/CPU-Scheduler-Simulation/blob/main/images/nonpriority-test.png?raw=true)
 
 ---
 
