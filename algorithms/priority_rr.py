@@ -80,5 +80,5 @@ def priority_round_robin(processes, quantum):
     n = len(processes)
     avg_turnaround_time = total_turnaround_time / n
     avg_waiting_time = total_waiting_time / n
-    cpu_utilization = (total_turnaround_time - total_waiting_time) / current_time
+    cpu_utilization = (total_turnaround_time - total_waiting_time) / current_time * 100
     return scheduler, quantum_details, avg_turnaround_time, avg_waiting_time, cpu_utilization
