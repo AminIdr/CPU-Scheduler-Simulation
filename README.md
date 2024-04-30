@@ -72,6 +72,10 @@ Moreover, the application also plots a Gantt chart, highlighting the details of 
 
 Furthermore, the application provides a pie chart illustrating CPU utilization, indicating the proportion of CPU time used and unused. This visualization aids users in assessing the efficiency of the scheduling algorithm in utilizing CPU resources effectively.
 
+#### 4.5 Exporting Scheduling Results to CSV:
+Users have the option to export the scheduling results table to a CSV file for further analysis and documentation. This feature enhances the usability of the application by allowing users to save and share scheduling results with others or import them into external tools for additional processing.
+
+
 These features collectively enhance the user experience by providing detailed and visual representations of scheduling results, enabling users to make informed decisions and comparisons between different scheduling algorithms.
 ##### 4.4.1 Example of Gantt Chart
 ![Gantt Chart Example](https://github.com/AminIdr/CPU-Scheduler-Simulation/blob/main/images/gantt.png?raw=true)
@@ -84,6 +88,6 @@ These features collectively enhance the user experience by providing detailed an
 
 ---
 
-### 7. Conclusion
+### 6. Conclusion
 
 This CPU Scheduling Simulator application provides a comprehensive platform for studying and analyzing process scheduling algorithms. By offering features such as importing processes from CSV, generating random processes, and manually inputting processes, users can explore different scenarios and evaluate the performance of scheduling algorithms. With a user-friendly interface and robust backend implementation, the application facilitates learning, experimentation, and research in the field of operating systems and process management.
