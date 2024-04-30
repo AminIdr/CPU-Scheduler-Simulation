@@ -84,18 +84,6 @@ These features collectively enhance the user experience by providing detailed an
 
 ---
 
-### 6. Performance Comparisons
-
-#### 6.1 Execution Time:
-- Performance tests measure the execution time of each scheduling algorithm for varying numbers of processes and burst time distributions.
-- Results are compared to identify algorithmic strengths and weaknesses in terms of runtime efficiency.
-
-#### 6.2 Resource Utilization:
-- CPU utilization metrics are collected to assess how effectively each algorithm utilizes system resources.
-- Lower CPU utilization indicates more efficient resource allocation and better system performance.
-
----
-
 ### 7. Conclusion
 
 This CPU Scheduling Simulator application provides a comprehensive platform for studying and analyzing process scheduling algorithms. By offering features such as importing processes from CSV, generating random processes, and manually inputting processes, users can explore different scenarios and evaluate the performance of scheduling algorithms. With a user-friendly interface and robust backend implementation, the application facilitates learning, experimentation, and research in the field of operating systems and process management.
