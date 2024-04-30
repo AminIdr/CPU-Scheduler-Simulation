@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Call the togglePriorityVisibility and toggleQuantumVisibility functions to initialize visibility based on the default selected algorithm
     togglePriorityVisibility();
     toggleQuantumVisibility();
+
     
     // Function to toggle the visibility of the Priority column based on the selected algorithm
     function togglePriorityColumnVisibility() {
@@ -56,12 +57,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Call the togglePriorityColumnVisibility function to initialize the visibility of the priority column based on the default selected algorithm
     togglePriorityColumnVisibility();
+    function togglePriorityRangeVisibility() {
+        const algorithm = document.getElementById('algorithm').value;
+        const priorityInput = document.getElementById('priorityRange');
+        const priorityNote = document.getElementById('priorityNote');
+    
+        if (algorithm === "priority" || algorithm === "priority_p" || algorithm === "priority_rr") {
+            priorityInput.style.display = 'block';
+            document.getElementById('priorityMin').required = true;
+            document.getElementById('priorityMax').required = true;
+    
+    
+            priorityNote.style.display = 'block';
+        } else {
+            priorityInput.style.display = 'none';
+            document.getElementById('priorityMin').required = false;
+            document.getElementById('priorityMax').required = false;
+            priorityNote.style.display = 'none';
+        }
+    };
+    togglePriorityRangeVisibility();
 
     // Add event listener to the algorithm select box to update the selected algorithm variable and toggle priority column visibility
     document.getElementById('algorithm').addEventListener('change', function() {
-        togglePriorityVisibility();
+        if (document.getElementById('newProcessID').value == "") {
+            togglePriorityRangeVisibility();
+        }
+        else{
+            togglePriorityVisibility();
+        }
         toggleQuantumVisibility();
-
         const newAlgorithm = this.value;
 
         // Clear the table when changing from priority-based algorithms to other algorithms or vice versa
@@ -162,10 +187,13 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault(); // Prevent default form submission behavior
     
         // Remove the required attribute from input fields
-        document.getElementById('newProcessID').removeAttribute('required');
-        document.getElementById('newArrivalTime').removeAttribute('required');
-        document.getElementById('newBurstTime').removeAttribute('required');
-        document.getElementById('newPriority').removeAttribute('required');
+            document.getElementById('newProcessID').removeAttribute('required');
+            document.getElementById('newArrivalTime').removeAttribute('required');
+            document.getElementById('newBurstTime').removeAttribute('required');
+            document.getElementById('newPriority').removeAttribute('required');
+        
+        
+       
     
         // Check if addedProcesses array is not empty
         if (Object.keys(addedProcesses).length === 0) {
@@ -485,6 +513,7 @@ document.addEventListener('DOMContentLoaded', function() {
             selectedAlgorithm = "priority";
             togglePriorityVisibility(); // Call function to toggle visibility of priority input
             togglePriorityColumnVisibility();
+
         }
         else{
             if (selectedAlgorithm === 'priority' || selectedAlgorithm === 'priority_p' || selectedAlgorithm === 'priority_rr'){
@@ -492,6 +521,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 selectedAlgorithm = "fcfs";
                 togglePriorityVisibility();
                 togglePriorityColumnVisibility();
+
             }
         }
 
@@ -570,7 +600,107 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add event listener to the export button
     document.getElementById('export').addEventListener('click', exportToCSV);
+    // Add event listener to the "Generate Random Processes" button
+document.getElementById('generateRandomProcesses').addEventListener('click', generateRandomProcesses);
 
+// Function to generate random processes
+function generateRandomProcesses() {
+    var algorithm = document.getElementById('algorithm').value;
+    const numProcesses = parseInt(document.getElementById('numProcesses').value);
+    const minArrivalTime = parseInt(document.getElementById('arrivalTimeMin').value);
+    const maxArrivalTime = parseInt(document.getElementById('arrivalTimeMax').value);
+    const minBurstTime = parseInt(document.getElementById('burstTimeMin').value);
+    const maxBurstTime = parseInt(document.getElementById('burstTimeMax').value);
+    const minPriority = parseInt(document.getElementById('priorityMin').value);
+    const maxPriority = parseInt(document.getElementById('priorityMax').value);
 
+    // Validate input
+    if (isNaN(numProcesses) || numProcesses < 1) {
+        alert("Please enter a valid number of processes.");
+        return;
+    }
+    if (isNaN(minArrivalTime) || isNaN(maxArrivalTime) || minArrivalTime < 0 || maxArrivalTime < minArrivalTime) {
+        alert("Please enter valid arrival time range.");
+        return;
+    }
+    if (isNaN(minBurstTime) || isNaN(maxBurstTime) || minBurstTime < 1 || maxBurstTime < minBurstTime) {
+        alert("Please enter valid burst time range.");
+        return;
+    }
+    if (algorithm === "priority" || algorithm === "priority_p" || algorithm === "priority_rr") {
+        if (isNaN(minPriority) || isNaN(maxPriority) || minPriority < 1 || maxPriority < minPriority) {
+            alert("Please enter valid priority range.");
+            return;
+        }
+    }
+    
+
+    // Clear existing processes from the table
+    clearTable();
+
+    // Generate and populate random processes
+    for (let i = 0; i < numProcesses; i++) {
+        var randomPriority = null;
+        const randomProcessID = i + 1;
+        const randomArrivalTime = Math.floor(Math.random() * (maxArrivalTime - minArrivalTime + 1)) + minArrivalTime;
+        const randomBurstTime = Math.floor(Math.random() * (maxBurstTime - minBurstTime + 1)) + minBurstTime;
+        if (algorithm === "priority" || algorithm === "priority_p" || algorithm === "priority_rr") {
+            randomPriority = Math.floor(Math.random() * (maxPriority - minPriority + 1)) + minPriority;
+        }
+        // Create a new table row
+        const newRow = document.createElement('tr');
+
+        // Create table data cells and add random values
+        const tdProcessID = document.createElement('td');
+        tdProcessID.textContent = randomProcessID;
+
+        const tdArrivalTime = document.createElement('td');
+        tdArrivalTime.textContent = randomArrivalTime;
+
+        const tdBurstTime = document.createElement('td');
+        tdBurstTime.textContent = randomBurstTime;
+        var tdPriority;
+       
+
+        // Append table data cells to the new row
+        newRow.appendChild(tdProcessID);
+        newRow.appendChild(tdArrivalTime);
+        newRow.appendChild(tdBurstTime);
+        if(algorithm === "priority" || algorithm === "priority_p" || algorithm === "priority_rr"
+        ){
+
+            tdPriority= document.createElement('td');
+            tdPriority.textContent = randomPriority;
+            newRow.appendChild(tdPriority);
+        }
+        // Append the new row to the table body
+        document.getElementById('processTableBody').appendChild(newRow);
+
+        // Add the process ID to the addedProcesses object
+        addedProcesses[randomProcessID] = true;
+    }
+}
+        // Add an event listener to the toggle button
+        document.getElementById('toggleRandomInputs').addEventListener('click', function() {
+            // Get the div containing the random inputs
+            var randomInputsDiv = document.getElementById('randomInputs');
+            var normalInputsDiv = document.getElementById('normalInputs');
+            var toggleButton = document.getElementById('toggleRandomInputs');
+            
+            // Toggle the display property of the random inputs div
+            if (randomInputsDiv.style.display === 'none') {
+                randomInputsDiv.style.display = 'block';
+                normalInputsDiv.style.display = 'none';
+                toggleButton.textContent = 'Normal Inputs';
+            } else {
+                randomInputsDiv.style.display = 'none';
+                normalInputsDiv.style.display = 'block';
+                toggleButton.textContent = 'Random Processes';
+            }
+        });
+        
+        
+        
 });
+
 

@@ -28,34 +28,74 @@
               <div class="card">
                 <div class="card-body">
                   <h5 class="card-title">Processes:</h5>
-                  <form id="processForm" action="/" method="POST" class="mt-4">
+                 <form id="processForm" action="/" method="POST" class="mt-4">
                     <!-- Inputs for Process ID, Arrival Time, Burst Time, and Priority -->
-                    <div class="row mb-3">
-                        <div class="col-md-3">
-                            <label for="newProcessID" class="form-label">Process ID:</label>
-                            <input type="number" name="newProcessID" id="newProcessID" class="form-control" required min="0">
+                    <di id = "normalInputs">
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label for="newProcessID" class="form-label">Process ID:</label>
+                                <input type="number" name="newProcessID" id="newProcessID" class="form-control" required min="1" value="">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="newArrivalTime" class="form-label">Arrival Time:</label>
+                                <input type="number" name="newArrivalTime" id="newArrivalTime" class="form-control" required min="0">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="newBurstTime" class="form-label">Burst Time:</label>
+                                <input type="number" name="newBurstTime" id="newBurstTime" class="form-control" required min="1">
+                            </div>
+                            <div class="col-md-3" id="priorityInput" style="display: none;">
+                                <label for="newPriority" class="form-label">Priority:</label>
+                                <input type="number" name="newPriority" id="newPriority" class="form-control" min="1">
+                            </div>
                         </div>
-                        <div class="col-md-3">
-                            <label for="newArrivalTime" class="form-label">Arrival Time:</label>
-                            <input type="number" name="newArrivalTime" id="newArrivalTime" class="form-control" required min="0">
+    
+    
+                        <div class="row mb-3">
+                            <div class="col-md-9">
+                                <button type="button" id="addProcess" class="btn btn-primary">Add Process</button>
+                                <p id="idError" style="color: red; display: inline;"></p>
+                            </div>
                         </div>
-                        <div class="col-md-3">
-                            <label for="newBurstTime" class="form-label">Burst Time:</label>
-                            <input type="number" name="newBurstTime" id="newBurstTime" class="form-control" required min="1">
+                    </di>
+                    
+                    <div id="randomInputs" style="display: none;">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="numProcesses" class="form-label">Number of Processes:</label>
+                                <input type="number" id="numProcesses" class="form-control" min="1" value="5" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="arrivalTimeRange" class="form-label">Arrival Time Range:</label>
+                                <div class="input-group">
+                                    <input type="number" id="arrivalTimeMin" class="form-control" placeholder="Min" min="0" value="0" required>
+                                    <input type="number" id="arrivalTimeMax" class="form-control" placeholder="Max" min="1" value="3" required>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-3" id="priorityInput" style="display: none;">
-                            <label for="newPriority" class="form-label">Priority:</label>
-                            <input type="number" name="newPriority" id="newPriority" class="form-control" min="0">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="burstTimeRange" class="form-label">Burst Time Range:</label>
+                                <div class="input-group">
+                                    <input type="number" id="burstTimeMin" class="form-control" placeholder="Min" min="1"value="1"  required>
+                                    <input type="number" id="burstTimeMax" class="form-control" placeholder="Max" min="1" value="4" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4" id ="priorityRange" style="display: none;">
+                                <label for="priorityRange" class="form-label"  >Priority Range:</label>
+                                <div class="input-group">
+                                    <input type="number" id="priorityMin" class="form-control" placeholder="Min" value="1" min="1" >
+                                    <input type="number" id="priorityMax" class="form-control" placeholder="Max" value="5"  min="1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-9">
+                                <button type="button" id="generateRandomProcesses" class="btn btn-primary">Generate Random Processes</button>
+                            </div>
                         </div>
                     </div>
 
-
-                    <div class="row mb-3">
-                        <div class="col-md-9">
-                            <button type="button" id="addProcess" class="btn btn-primary">Add Process</button>
-                            <p id="idError" style="color: red; display: inline;"></p>
-                        </div>
-                    </div>
                     <!-- Process Table -->
                     <table class="table">
                         <thead>
@@ -86,13 +126,15 @@
                         </div>
                         <div class="col-md-3" id="quantumInput" style="display: none;">
                             <label for="quantum" class="form-label">Quantum:</label>
-                            <input type="number" name="quantum" id="quantum" class="form-control" min="1">
+                            <input type="number" name="quantum" id="quantum" class="form-control" min="1" value="2">
                         </div>
                     </div>
 
                     <div class="row mt-3 ">
                         <div class="col-m-3">
                             <button type="submit" id="calculate" class="btn btn-primary">Calculate</button>
+                           
+                            <button type="button" id="toggleRandomInputs" class="btn btn-primary">Random Processes</button>
                             <button type="button" id="clear" class="btn btn-danger">Clear Table</button>
                             <p id="noProcessError" style="color: red;"></p>
                         </div>
@@ -100,6 +142,7 @@
                         <p id="priorityNote" style="display: none; font-style: italic;">Note: Lower numbers indicate higher priorities</p>
                     </div>
                 </form>
+
                 </div>
               </div>
             </div>
